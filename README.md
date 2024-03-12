@@ -12,7 +12,7 @@ A file transfer utility application that allows users to securely transfer files
 1. File Handling: Read and write files using file streams and manage file descriptors appropriately.
 1. STL Containers: Utilize STL containers like vectors or maps for managing data structures efficiently.
 1. Smart Pointers: Use smart pointers to manage dynamic memory allocation and prevent memory leaks.
-1. Object-Oriented Design: Design the application with an object-oriented approach, encapsulating functionality into 1. classes and leveraging inheritance and polymorphism where appropriate.
+1. Object-Oriented Design: Design the application with an object-oriented approach, encapsulating functionality into classes and leveraging inheritance and polymorphism where appropriate.
 1. Timers: Implement timers for synchronous/asynchronous file transfers and for managing timeouts during network operations.
 1. CMake: Use CMake as the build system for the project to ensure portability and easy compilation on different platforms.
 
