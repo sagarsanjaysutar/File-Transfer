@@ -1,10 +1,9 @@
 #include <QCoreApplication>
 #include <QProcess>
 #include <QDebug>
-#include <fstream>
 #include <QNetworkInterface>
 
-QString getCIDRNotation(QHostAddress ipAddress, QHostAddress subnetMask){
+QString getNetworkCIDR(QHostAddress ipAddress, QHostAddress subnetMask){
     
     // Convert the IP Address into integer.
     quint32 subnetAddrInt = subnetMask.toIPv4Address();
@@ -23,33 +22,46 @@ QString getCIDRNotation(QHostAddress ipAddress, QHostAddress subnetMask){
     return ipAddrList.join(".").append("/").append(QString::number(cidr));
 }
 
-int main(int argc, char *argv[]){
-    QCoreApplication a(argc, argv);
-    qDebug() << getCIDRNotation(QHostAddress(QString("192.168.0.172")), QHostAddress(QString("255.255.255.0")));
-    return 0;
+int startProcess(QString cmdStr){
     QProcess *cmd = new QProcess();
     QObject::connect(
         cmd,
         &QProcess::readyReadStandardOutput,
         [=](){
-             qDebug() << "Finished";
+            qDebug() << "Command execution output received.";
             QString output(cmd->readAllStandardOutput());
             QStringList op = output.split("\n");
-            foreach(QString line , op){
-                qDebug() << "\t " << line;
+            foreach (QString line, op){
+                qDebug() << line;
             }
         });
+    cmd->start(cmdStr);
 
-    // struct NetworkInterface{
-    //     QHostAddress ip;
-    //     QHostAddress subnetMask;
-    //     qint8 CIDRNotation;
+    if (!cmd->waitForStarted()){
+        qDebug() << "Failed to start command execution";
+        return -1;
+    }
 
-    // }
+    if (!cmd->waitForFinished()){
+        qDebug() << "Command execution timed out";
+        return -1;
+    }
+
+    qDebug() << "Command execution completed";
+
+    delete cmd;
+    return 0;
+}
+
+int main(int argc, char *argv[]){
     
-        
-    // const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    // const QHostAddress &localhost = ;
+
+    struct NetworkInterface{
+        QString networkCIDR;
+        QNetworkAddressEntry networkInfo;
+    };
+    
+    // Iterate through networks.
     for(const QNetworkInterface &interface : QNetworkInterface::allInterfaces()){
         for(QNetworkAddressEntry entry : interface.addressEntries()){
             if( interface.flags() & QNetworkInterface::IsRunning;
@@ -57,25 +69,14 @@ int main(int argc, char *argv[]){
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback()
                 ){
-                qDebug() << " ==== " << entry.ip() << "\t" << entry.netmask() << entry.netmask().toIPv4Address();
+                
+                qDebug() << "IP Address " << entry.ip().toString()
+                << "\tNetwork CIDR " << getNetworkCIDR(entry.ip(), entry.netmask());
             }
         }
     }
-    // cmd->start("ifconfig");
-
-    // if (!cmd->waitForStarted()) {
-    //     qDebug() << "Failed to start command execution";
-    //     return -1;
-    // }
-
-    // if (!cmd->waitForFinished()) {
-    //     qDebug() << "Command execution timed out";
-    //     return -1;
-    // }
-
-    qDebug() << "Command execution completed";
-
-    delete cmd;
-
-    return a.exec();
+    
+    // QCoreApplication a(argc, argv);
+    // return a.exec();
+    return 0;
 }

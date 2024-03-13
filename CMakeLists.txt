@@ -7,11 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # add_subdirectory(libs/Qt5)
 find_package(Qt6 COMPONENTS Core)
 
-add_executable(MyExecutable Discovery.cpp)
+add_executable(file_transfer Discovery.cpp)
 
-# if(TARGET Qt6::Core)
-#     message(STATUS "Qt6 core found")
-# else()
-#     message(STATUS "Qt6 core not found")
-# endif()
-target_link_libraries(MyExecutable PUBLIC Qt6::Core)
+target_link_libraries(file_transfer PUBLIC Qt6::Core)
