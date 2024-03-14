@@ -1,7 +1,18 @@
-#include <QCoreApplication>
 #include <QProcess>
 #include <QDebug>
 #include <QNetworkInterface>
+
+class NetworkInterface{
+public:
+    QString m_networkCIDR;
+    QNetworkInterface m_networkInterface;
+
+    NetworkInterface(QString networkCIDR, QNetworkInterface networkInterface) :
+    m_networkCIDR(networkCIDR),
+    m_networkInterface(networkInterface)
+    {}
+
+};
 
 QString getNetworkCIDR(QHostAddress ipAddress, QHostAddress subnetMask){
     
@@ -53,30 +64,29 @@ int startProcess(QString cmdStr){
     return 0;
 }
 
-int main(int argc, char *argv[]){
-    
-
-    struct NetworkInterface{
-        QString networkCIDR;
-        QNetworkAddressEntry networkInfo;
-    };
+int main(){
+    qDebug() << QHostAddress(QHostAddress::Broadcast) ;
+    return 0;
+    QList<NetworkInterface> networkInterfaces;
     
     // Iterate through networks.
     for(const QNetworkInterface &interface : QNetworkInterface::allInterfaces()){
+        // qDebug() << interface;
+
         for(QNetworkAddressEntry entry : interface.addressEntries()){
-            if( interface.flags() & QNetworkInterface::IsRunning;
+            if( interface.flags() & QNetworkInterface::IsRunning &&
                 entry.ip().protocol() == QAbstractSocket::IPv4Protocol &&
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback()
                 ){
-                
-                qDebug() << "IP Address " << entry.ip().toString()
-                << "\tNetwork CIDR " << getNetworkCIDR(entry.ip(), entry.netmask());
+                QString networkCIDRStr = getNetworkCIDR(entry.ip(), entry.netmask());
+                // qDebug() << "IP Address " << entry.ip().toString()
+                // << "\tNetwork CIDR " << networkCIDRStr;
+                networkInterfaces.append(NetworkInterface(networkCIDRStr, interface));
             }
         }
     }
-    
-    // QCoreApplication a(argc, argv);
-    // return a.exec();
+
+
     return 0;
 }
