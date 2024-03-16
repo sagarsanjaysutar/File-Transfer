@@ -9,7 +9,10 @@
         "-g",
         "${file}",
         "-o",
-        "${workspaceFolder}/Output/${fileBasenameNoExtension}.o",
+        "${workspaceFolder}/.output/${fileBasenameNoExtension}.o",
+        "src/*.cpp",
+        "-I",
+        "inc/",
         "-I",
         "/home/ssutar/Deep-Trekker/QT/5.11.3/gcc_64/include/",
         "-I",
@@ -35,7 +38,7 @@
     {
       "label": "QT C++ Run",
       "type": "shell",
-      "command": "${workspaceFolder}/Output/${fileBasenameNoExtension}.o",
+      "command": "${workspaceFolder}/.output/${fileBasenameNoExtension}.o",
       "options": {
         "cwd": "${fileDirname}"
       },
