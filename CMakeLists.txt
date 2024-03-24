@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 COMPONENTS Core)
 
-add_executable(file_transfer Discovery.cpp)
+message(STATUS "QT6 found: ${Qt6_FOUND}")
 
-target_link_libraries(file_transfer PUBLIC Qt6::Core)
+# add_executable(file_transfer Discovery.cpp)
+
+# target_link_libraries(file_transfer PUBLIC Qt6::Core)

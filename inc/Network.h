@@ -3,16 +3,7 @@
 
 #include <QNetworkInterface>
 
-class NetworkInterface{
-public:
-    QString m_networkCIDR;
-    QNetworkInterface m_networkInterface;
 
-    NetworkInterface(QString networkCIDR, QNetworkInterface networkInterface) :
-    m_networkCIDR(networkCIDR),
-    m_networkInterface(networkInterface)
-    {}
-};
 
 class Network{
 public:
@@ -20,10 +11,15 @@ public:
     ~Network();
     
 private:
-    
-    QString getCIDRAddress(QHostAddress ipAddress, QHostAddress subnetMask);
+    QList<NetworkInterface> m_localHostInterfaces;
     QList<NetworkInterface> getLocalHostInterfaces();
-    QList<NetworkInterface> getInterfaces(QString cidrAddress);
+
+    /**
+     * @brief Get list of SFTP hosts on the network interface.
+    */
+    QList<QHostAddress> getSFTPHosts(NetworkInterface interface);
+    QList<QHostAddress> parseNmapResp(QString resp);
+    
     
 };
 
