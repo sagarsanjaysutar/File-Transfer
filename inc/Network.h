@@ -2,7 +2,7 @@
 #define NETWORK_H
 
 #include <QNetworkInterface>
-
+#include "NetworkInterface.h"
 
 
 class Network{
@@ -17,9 +17,8 @@ private:
     /**
      * @brief Get list of SFTP hosts on the network interface.
     */
-    QList<QHostAddress> getSFTPHosts(NetworkInterface interface);
+    QList<NetworkInterface> getSFTPInterfaces(NetworkInterface interface);
     QList<QHostAddress> parseNmapResp(QString resp);
-    
     
 };
 

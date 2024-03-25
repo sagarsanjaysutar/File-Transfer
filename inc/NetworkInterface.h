@@ -11,7 +11,6 @@ class NetworkInterface {
 public:
     NetworkInterface(QHostAddress ip, QHostAddress mask);
     NetworkInterface(QNetworkInterface interface);
-private:
 
     QString m_CIDRAddress;
     QHostAddress m_ipAddress;
