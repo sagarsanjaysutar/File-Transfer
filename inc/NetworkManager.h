@@ -13,8 +13,33 @@ class NetworkManager{
 public:
     NetworkManager();
     ~NetworkManager();
+
     
+    QList<NetworkInterface> getLocalHostInterface(){ return m_localHostInterfaces; }
+    QHash<NetworkInterface, QList<NetworkInterface>> getHostInterfaces() { return m_hostInterfaces;}
+
 private:
+
+    /**
+     * @brief List of local system's network interfaces like Wifi, ethernet, etc.
+    */
+    QList<NetworkInterface> m_localHostInterfaces;
+
+    /**
+     * @brief List of host interfaces found on each local interface's network 
+     * e.g. hosts/devices on wifi or ethernet network.
+     * 
+     * The structure of data is 
+     * {
+     *  // Hosts/devices found on the wifi's main network.
+     *  "wifiInterface": {device1Interface, device2Interface....},
+     * 
+     *  // Hosts/devices found on the ethernet's main network.
+     *  "ethernetInterface": {device10Interface, device11Interface...},
+     *  ...
+     * }
+    */
+    QHash<NetworkInterface, QList<NetworkInterface>> m_hostInterfaces;
 
     /**
      * @brief Discover interfaces on the local system.
@@ -37,28 +62,6 @@ private:
      * @brief Helper function to parse the nmap response & return a list of hosts IP address.
     */
     QList<QHostAddress> parseNmapResp(QString resp);
-
-
-    /**
-     * @brief List of local system's network interfaces like Wifi, ethernet, etc.
-    */
-    QList<NetworkInterface> m_localHostInterfaces;
-
-    /**
-     * @brief List of host interfaces found on each local interface's network 
-     * e.g. hosts/devices on wifi or ethernet network.
-     * 
-     * The structure of data is 
-     * {
-     *  // Hosts/devices found on the wifi's main network.
-     *  "wifiInterface": {device1Interface, device2Interface....},
-     * 
-     *  // Hosts/devices found on the ethernet's main network.
-     *  "ethernetInterface": {device10Interface, device11Interface...},
-     *  ...
-     * }
-    */
-    QHash<NetworkInterface, QList<NetworkInterface>> m_hostInterfaces;
 };
 
 #endif

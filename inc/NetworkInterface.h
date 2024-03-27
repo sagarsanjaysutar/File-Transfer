@@ -31,7 +31,6 @@ private:
     void setIpAddress(const QHostAddress ipAddress);
     void setMaskAddress(const QHostAddress maskAddress);
     void setName(const QString name);
-
     
     QString m_CIDRAddress;      // Network address: 192.168.1.0/24
     QHostAddress m_ipAddress;   // IP Address

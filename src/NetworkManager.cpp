@@ -4,17 +4,17 @@
 #include <QProcess>
 
 NetworkManager::NetworkManager(){
-    qDebug() << "Network: Constructor called.";
+    qDebug() << "NetworkManager: Constructor called.";
 
     // Discover interfaces on the local system.
     setLocalHostInterfaces();
 
     // Discover host interfaces on each of the local interfaces.
-    setHostInterfaces();
+    // setHostInterfaces();
 }
 
 NetworkManager::~NetworkManager(){
-    qDebug() << "Network: Destructor called.";
+    qDebug() << "NetworkManager: Destructor called.";
 }
 
 void NetworkManager::setLocalHostInterfaces(){
@@ -36,11 +36,11 @@ void NetworkManager::setLocalHostInterfaces(){
 void NetworkManager::setHostInterfaces(){
 
     if(m_localHostInterfaces.count() == 0){
-        qDebug() << "Network: No local interfaces found. Can't discover hosts.";
+        qDebug() << "NetworkManager: No local interfaces found. Can't discover hosts.";
         return;
     }
     else{
-        qDebug() << "Network:" << m_localHostInterfaces.count() << "local interfaces found. Discovering hosts on it.";
+        qDebug() << "NetworkManager:" << m_localHostInterfaces.count() << "local interfaces found. Discovering hosts on it.";
 
         // Iterate interfaces on the local system to discover hosts.
         for(NetworkInterface interface : m_localHostInterfaces){
@@ -71,22 +71,21 @@ QList<NetworkInterface> NetworkManager::discoverHostInterfaces(NetworkInterface 
     // nmap command.
     QString cmdStr = "nmap -p 80 " + interface.getCIDRAddress() + " --exclude " + localHostInterfaces;    
     nmapProcess->start(cmdStr);
-    qDebug() << "Network: Discovery execution started. " << cmdStr;
+    qDebug() << "NetworkManager: Discovery execution started. " << cmdStr;
 
     // Wait for the process to start
     if (!nmapProcess->waitForStarted()){
-        qDebug() << "Network: Failed to start the discovery process.";
+        qDebug() << "NetworkManager: Failed to start the discovery process.";
         return hostInterfaces;
     }
 
     // Wait until the process is completed.
     if (!nmapProcess->waitForFinished()){
-        qDebug() << "Network: Discovery process timedout.";
+        qDebug() << "NetworkManager: Discovery process timedout.";
         return hostInterfaces;
     }
 
     // Misc. cleanup
-    qDebug() << "Network: Discovery execution completed.";
     delete nmapProcess;
 
     // Populate QList<NetworkInterface> with the generated IP address from nmap process.
@@ -95,7 +94,7 @@ QList<NetworkInterface> NetworkManager::discoverHostInterfaces(NetworkInterface 
         hostInterfaces.append(NetworkInterface(ipAddr, interface.getMaskAddress()));
     }
 
-    qDebug() << "Network: Found" << hostInterfaces.count() << "hosts on" << interface.getIpAddress().toString();
+    qDebug() << "NetworkManager: Discovery execution completed. Found" << hostInterfaces.count() << "hosts on" << interface.getIpAddress().toString();
 
     return hostInterfaces;
 }
