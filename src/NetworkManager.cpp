@@ -1,40 +1,25 @@
-
-#include "Network.h"
+#include "NetworkManager.h"
 #include <QRegularExpression>
 #include <QDebug>
 #include <QProcess>
 
-Network::Network(){
+NetworkManager::NetworkManager(){
     qDebug() << "Network: Constructor called.";
 
-    // Discover localhost interfaces
-    m_localHostInterfaces = getLocalHostInterfaces();
+    // Discover interfaces on the local system.
+    setLocalHostInterfaces();
 
-
-    if(m_localHostInterfaces.count() == 0){
-        qDebug() << "Network: No interfaces";
-    }
-    else{
-
-        // Iterate localhost interfaces to discover SFTP hosts within each of those interface's internal network.
-        for(NetworkInterface interface : m_localHostInterfaces){
-            QList<NetworkInterface> sftpInterfaces = getSFTPInterfaces(interface);
-
-            QString resp = "Network: " + QString::number(sftpInterfaces.count()) 
-            + " SFTP interfaces found on " + interface.getIpAddress().toString();
-            qDebug() << resp;
-        }
-    }
+    // Discover host interfaces on each of the local interfaces.
+    setHostInterfaces();
 }
 
-Network::~Network(){
+NetworkManager::~NetworkManager(){
     qDebug() << "Network: Destructor called.";
 }
 
-QList<NetworkInterface> Network::getLocalHostInterfaces(){
-    QList<NetworkInterface> networkInterfaces;
+void NetworkManager::setLocalHostInterfaces(){
     
-    // Build local host interfaces.
+    // Iterate the network interfaces on the local system.
     for(const QNetworkInterface &interface : QNetworkInterface::allInterfaces()){
         for(QNetworkAddressEntry entry : interface.addressEntries()){
             if( interface.flags() & QNetworkInterface::IsRunning &&
@@ -42,21 +27,35 @@ QList<NetworkInterface> Network::getLocalHostInterfaces(){
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback()
                 ){
-                networkInterfaces.append(NetworkInterface(entry.ip(), entry.netmask()));
+                m_localHostInterfaces.append(NetworkInterface(entry.ip(), entry.netmask()));
             }
         }
     }
-
-    return networkInterfaces;
 }
 
-QList<NetworkInterface> Network::getSFTPInterfaces(NetworkInterface interface){
+void NetworkManager::setHostInterfaces(){
+
+    if(m_localHostInterfaces.count() == 0){
+        qDebug() << "Network: No local interfaces found. Can't discover hosts.";
+        return;
+    }
+    else{
+        qDebug() << "Network:" << m_localHostInterfaces.count() << "local interfaces found. Discovering hosts on it.";
+
+        // Iterate interfaces on the local system to discover hosts.
+        for(NetworkInterface interface : m_localHostInterfaces){
+            m_hostInterfaces.insert(interface, discoverHostInterfaces(interface));
+        }
+    }
+}
+
+QList<NetworkInterface> NetworkManager::discoverHostInterfaces(NetworkInterface interface){
 
     // nmap response
     QString nmapResp;
 
     // List of empty interfaces.
-    QList<NetworkInterface> interfaces = QList<NetworkInterface>();
+    QList<NetworkInterface> hostInterfaces = QList<NetworkInterface>();
 
     // Initialise nmap process
     QProcess *nmapProcess = new QProcess();
@@ -70,37 +69,41 @@ QList<NetworkInterface> Network::getSFTPInterfaces(NetworkInterface interface){
     }
 
     // nmap command.
-    QString cmdStr = "nmap -p 22,2222 " + interface.getCIDRAddress() + " --exclude " + localHostInterfaces;    
+    QString cmdStr = "nmap -p 80 " + interface.getCIDRAddress() + " --exclude " + localHostInterfaces;    
     nmapProcess->start(cmdStr);
-    qDebug() << "Network: Started " << cmdStr;
+    qDebug() << "Network: Discovery execution started. " << cmdStr;
 
     // Wait for the process to start
     if (!nmapProcess->waitForStarted()){
         qDebug() << "Network: Failed to start the discovery process.";
-        return interfaces;
+        return hostInterfaces;
     }
 
     // Wait until the process is completed.
     if (!nmapProcess->waitForFinished()){
         qDebug() << "Network: Discovery process timedout.";
-        return interfaces;
+        return hostInterfaces;
     }
 
     // Misc. cleanup
-    qDebug() << "Network: Discovery execution completed";
+    qDebug() << "Network: Discovery execution completed.";
     delete nmapProcess;
 
-    // Once the nmap process is completed, & list of IP address are found, make a list NetworkInterfaces.
-    // Note: All the IP address found by the above nmap search would have same mask address.
+    // Populate QList<NetworkInterface> with the generated IP address from nmap process.
+    // Note: All the IP address found by a nmap search would have same mask address.
     for(QHostAddress ipAddr : parseNmapResp(nmapResp)){
-        interfaces.append(NetworkInterface(ipAddr, interface.getMaskAddress()));
+        hostInterfaces.append(NetworkInterface(ipAddr, interface.getMaskAddress()));
     }
-    return interfaces;
+
+    qDebug() << "Network: Found" << hostInterfaces.count() << "hosts on" << interface.getIpAddress().toString();
+
+    return hostInterfaces;
 }
 
-QList<QHostAddress> Network::parseNmapResp(QString resp){
+QList<QHostAddress> NetworkManager::parseNmapResp(QString resp){
 
     if(resp.isEmpty()){
+
         return QList<QHostAddress>();
     }
 
@@ -109,16 +112,22 @@ QList<QHostAddress> Network::parseNmapResp(QString resp){
 
     // Parse the nmap response. Refer the nmap output to understand the following logic
     QStringList dataList = resp.split("\n");
-    for(int idx = 0; idx < dataList.count(); idx++){
+    int idx = 0;
+    while(idx < dataList.count()){
         QString line = dataList.at(idx);
         if(line.contains("Nmap scan report")){
-            if(dataList.at(idx + 4).contains("open") || dataList.at(idx + 5).contains("open")){
+            QString portLine = dataList.at(idx + 4);
+
+            if(portLine.contains("80") && portLine.contains("open")){
                 // Regex to fetch the IP address.
                 QRegularExpression rx("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
                 QRegularExpressionMatch ipMatch = rx.match(line);
                 hosts << QHostAddress(ipMatch.captured(0));
+                // qDebug() << ipMatch.captured(0);
             }
         }
+
+        idx++;
     }
     
     return hosts;

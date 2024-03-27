@@ -11,7 +11,12 @@
 class NetworkInterface {
 public:
     NetworkInterface(QHostAddress ip, QHostAddress mask);
-    NetworkInterface(QNetworkInterface interface);   
+    NetworkInterface(QNetworkInterface interface);
+
+    /**
+     * @brief Since this class is used a key in a QHash, it requires == override. 
+    */
+    bool operator == (const NetworkInterface& rhs) const { return m_ipAddress == rhs.getIpAddress(); }
 
     // Getters
     QString getCIDRAddress() const { return m_CIDRAddress; }
@@ -33,5 +38,10 @@ private:
     QHostAddress m_maskAddress; // Netmask address
     QString m_name;             // Interface name
 };
+
+/**
+ * @brief Since this class is used a key in a QHash, it requires a global hash function.
+*/
+inline uint qHash(const NetworkInterface &rhs) {return qHash(rhs.getCIDRAddress()); }
 
 #endif

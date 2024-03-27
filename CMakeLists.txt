@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include Qt6
 find_package(Qt6 REQUIRED COMPONENTS Core Network)
-message(STATUS "QT6 found: ${Qt6_FOUND}")
+message(STATUS "QT6 found: ${Qt6_FOUND} at ${Qt6_DIR}")
 
 # Include header files
 include_directories(${PROJECT_SOURCE_DIR}/inc)

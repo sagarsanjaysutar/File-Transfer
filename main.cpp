@@ -1,6 +1,6 @@
-#include "Network.h"
+#include "NetworkManager.h"
 
 int main(){
-    Network discovery;
+    NetworkManager discovery;
     return 0;
 }
