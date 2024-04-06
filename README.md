@@ -18,14 +18,14 @@ _The purpose of this project is to learn various advanced concepts in C++._
 
 ## Running the project
 
-The project compilation will be done in a docker container which have pre-installed development dependencies.
+The project compilation will be done in a [docker container](https://hub.docker.com/layers/stateoftheartio/qt6/6.5-gcc-aqt/images/sha256-c0dfd1cd174d855f0157ce0455270b2ee49f5eea4c7a40ffe0e848d41ae4d074?context=explore) which has pre-installed development dependencies.
 
 1. Download, verify and run the docker container by running the following commands in terminal:
 
    ```shell
    > docker pull stateoftheartio/qt6:6.5-gcc-aqt
    > docker images
-   > docker run -it -v '<Local-Path-of-this-repo>:/File-Transfer' <image-id>
+   > docker run -it -v '<local-path-of-this-repo>:/File-Transfer' <image-id>
    ```
 
 2. The repo will be mounted to the docker container. Next, using `cmake` the project will be compiled. Inside the docker container run the following commands:
