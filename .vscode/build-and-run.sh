@@ -2,14 +2,14 @@
 
 # A script file which will be run inside the docker container.
 
-# Repo dir mounted to the docker container
-repo_dir="/File-Transfer"
+# Location of repo inside the docker container
+cd /File-Transfer
 
 # Make build directory
-mkdir -p ${repo_dir}/build
+mkdir -p build
 
 # Configre the project
-cmake -B ${repo_dir}/build -S ${repo_dir}
+cmake -B build -S .
 if [ $? -eq 0 ]; then
     echo "CMake configuration successful."
 else
@@ -17,7 +17,7 @@ else
 fi
 
 # Build the project
-cmake --build ${repo_dir}/build
+cmake --build build
 if [ $? -eq 0 ]; then
     echo "CMake building successful."
 else
@@ -25,7 +25,7 @@ else
 fi
 
 # Run the app
-/bin/bash -c "${repo_dir}/build/file_transfer"
+/bin/bash -c "build/file_transfer"
 if [ $? -eq 0 ]; then
     echo "Successful executed the app."
 else
