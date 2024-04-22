@@ -1,10 +1,11 @@
 #include "NetworkInterface.h"
 
-NetworkInterface::NetworkInterface(QHostAddress ip, QHostAddress mask) : 
+NetworkInterface::NetworkInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type) : 
     m_CIDRAddress(""),
     m_ipAddress(ip),
     m_maskAddress(mask),
-    m_name("")
+    m_name(name),
+    m_type(type)
 {
     // Set CIDR Address
     setCIDRAddress(m_ipAddress, m_maskAddress);
