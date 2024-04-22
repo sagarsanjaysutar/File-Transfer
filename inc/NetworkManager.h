@@ -2,7 +2,6 @@
 #define NETWORKMANANGER_H
 
 #include <QNetworkInterface>
-#include <QHash>
 #include "NetworkInterface.h"
 
 
@@ -15,8 +14,14 @@ public:
     ~NetworkManager();
 
     
-    QList<NetworkInterface> getLocalHostInterface(){ return m_localHostInterfaces; }
-    QHash<NetworkInterface, QList<NetworkInterface>> getHostInterfaces() { return m_hostInterfaces;}
+    QList<NetworkInterface> getLocalHostInterfaces() const {return m_localHostInterfaces; };
+    NetworkInterface getLocalHostInterface();
+
+    /**
+     * @brief Discover hosts interfaces on the given network.
+     * Similar to `nmap 192.168.0.0/24`
+    */
+    QList<NetworkInterface> getHostInterfaces(NetworkInterface interface);
 
 private:
 
@@ -26,37 +31,10 @@ private:
     QList<NetworkInterface> m_localHostInterfaces;
 
     /**
-     * @brief List of host interfaces found on each local interface's network 
-     * e.g. hosts/devices on wifi or ethernet network.
-     * 
-     * The structure of data is 
-     * {
-     *  // Hosts/devices found on the wifi's main network.
-     *  "wifiInterface": {device1Interface, device2Interface....},
-     * 
-     *  // Hosts/devices found on the ethernet's main network.
-     *  "ethernetInterface": {device10Interface, device11Interface...},
-     *  ...
-     * }
-    */
-    QHash<NetworkInterface, QList<NetworkInterface>> m_hostInterfaces;
-
-    /**
      * @brief Discover interfaces on the local system.
      * Similar to the output of `ifconfig` or `ipconfig`
     */
     void setLocalHostInterfaces();
-
-    /**
-     * @brief Setter for host interfaces.
-    */
-    void setHostInterfaces();
-
-    /**
-     * @brief Discover hosts interfaces on the given network.
-     * Similar to `nmap 192.168.0.0/24`
-    */
-    QList<NetworkInterface> discoverHostInterfaces(NetworkInterface interface);
 
     /**
      * @brief Helper function to parse the nmap response & return a list of hosts IP address.

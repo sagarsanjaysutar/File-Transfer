@@ -1,4 +1,6 @@
 #include "NetworkManager.h"
+#include "networknamespace.h"
+
 #include <QRegularExpression>
 #include <QDebug>
 #include <QProcess>
@@ -9,7 +11,7 @@ NetworkManager::NetworkManager(){
     // Discover interfaces on the local system.
     setLocalHostInterfaces();
 
-    // Discover host interfaces on each of the local interfaces.
+    // // Discover host interfaces on each of the local interfaces.
     // setHostInterfaces();
 }
 
@@ -18,7 +20,8 @@ NetworkManager::~NetworkManager(){
 }
 
 void NetworkManager::setLocalHostInterfaces(){
-    
+    qDebug() << "NetworkManager: Setting localhost interfaces.";
+
     // Iterate the network interfaces on the local system.
     for(const QNetworkInterface &interface : QNetworkInterface::allInterfaces()){
         for(QNetworkAddressEntry entry : interface.addressEntries()){
@@ -27,29 +30,33 @@ void NetworkManager::setLocalHostInterfaces(){
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback()
                 ){
-                m_localHostInterfaces.append(NetworkInterface(entry.ip(), entry.netmask()));
+                m_localHostInterfaces.append(
+                    NetworkInterface(
+                        entry.ip(),
+                        entry.netmask(), 
+                        interface.humanReadableName(),
+                        interface.type()));
             }
         }
     }
+
+    for(NetworkInterface interface: m_localHostInterfaces)
+        qDebug() << "NetworkManager: Found" << interface.getName();
 }
 
-void NetworkManager::setHostInterfaces(){
-
-    if(m_localHostInterfaces.count() == 0){
-        qDebug() << "NetworkManager: No local interfaces found. Can't discover hosts.";
-        return;
-    }
-    else{
-        qDebug() << "NetworkManager:" << m_localHostInterfaces.count() << "local interfaces found. Discovering hosts on it.";
-
-        // Iterate interfaces on the local system to discover hosts.
-        for(NetworkInterface interface : m_localHostInterfaces){
-            m_hostInterfaces.insert(interface, discoverHostInterfaces(interface));
+NetworkInterface NetworkManager::getLocalHostInterface(){
+    for(NetworkInterface interface: m_localHostInterfaces){
+        if(interface.getType() == QNetworkInterface::Ethernet){
+            return interface;
         }
     }
+    
+    // Send the first network interface.
+    return m_localHostInterfaces.at(0);
+
 }
 
-QList<NetworkInterface> NetworkManager::discoverHostInterfaces(NetworkInterface interface){
+QList<NetworkInterface> NetworkManager::getHostInterfaces(NetworkInterface interface){
 
     // nmap response
     QString nmapResp;
@@ -69,7 +76,7 @@ QList<NetworkInterface> NetworkManager::discoverHostInterfaces(NetworkInterface 
     }
 
     // nmap command.
-    QString cmdStr = "nmap -p 80 " + interface.getCIDRAddress() + " --exclude " + localHostInterfaces;    
+    QString cmdStr = "nmap -p " + QString::number(Network::PORT) + " " + interface.getCIDRAddress() + " --exclude " + localHostInterfaces;    
     nmapProcess->start(cmdStr);
     qDebug() << "NetworkManager: Discovery execution started. " << cmdStr;
 
@@ -117,7 +124,7 @@ QList<QHostAddress> NetworkManager::parseNmapResp(QString resp){
         if(line.contains("Nmap scan report")){
             QString portLine = dataList.at(idx + 4);
 
-            if(portLine.contains("80") && portLine.contains("open")){
+            if(portLine.contains(QString::number(Network::PORT)) && portLine.contains("open")){
                 // Regex to fetch the IP address.
                 QRegularExpression rx("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
                 QRegularExpressionMatch ipMatch = rx.match(line);
