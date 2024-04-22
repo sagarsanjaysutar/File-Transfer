@@ -10,7 +10,7 @@ set(Vulkan_INCLUDE_DIR "/usr/include/vulkan")
 set(XKB_INCLUDE_DIR "/usr/include/xcb/")
 set(XKB_LIBRARY "/usr/lib/x86_64-linux-gnu/")
 
-find_package(Qt6 REQUIRED COMPONENTS Core Network Gui Qml)
+find_package(Qt6 REQUIRED COMPONENTS Core Network Gui Qml Quick)
 message(STATUS "QT6 found: ${Qt6_FOUND} at ${Qt6_DIR}" )
 
 qt_standard_project_setup()
@@ -22,8 +22,8 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 # Include resource files
-qt_add_resources(RESOURCES ${PROJECT_SOURCE_DIR}/res/qml.qrc)
+qt_add_resources(RESOURCES ${PROJECT_SOURCE_DIR}/res/qml.qrc ${PROJECT_SOURCE_DIR}/res/fonts.qrc) 
 
 # Configure the executable
 add_executable(file_transfer ${SOURCES} ${RESOURCES})
-target_link_libraries(file_transfer PRIVATE Qt6::Core Qt6::Network Qt6::Qml Qt6::Gui)
+target_link_libraries(file_transfer PRIVATE Qt6::Core Qt6::Network Qt6::Qml Qt6::Gui Qt6::Quick)
