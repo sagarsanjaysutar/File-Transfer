@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# A script file which will be run inside the docker container.
+# A helper script file which will be run inside the docker container.
 
 # Location of repo inside the docker container
 cd /File-Transfer
