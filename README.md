@@ -20,22 +20,21 @@ _The purpose of this project is to learn various advanced concepts in C++._
 
 The project compilation will be done in a [docker container](https://hub.docker.com/layers/stateoftheartio/qt6/6.5-gcc-aqt/images/sha256-c0dfd1cd174d855f0157ce0455270b2ee49f5eea4c7a40ffe0e848d41ae4d074?context=explore) which has pre-installed development dependencies.
 
-1. Download, verify and run the docker container by running the following commands in terminal:
+1. Download and run the docker container. This repo will be mounted to the container. Standard configuration for X11-forwarding is also added to run GUI apps inside the container.
 
    ```shell
-   > docker pull stateoftheartio/qt6:6.5-gcc-aqt
+   > cd File-Transfer
+   > docker build -t file_transfer:v1.0 ${PWD}
    > docker images
-   > docker run -it -v '<local-path-of-this-repo>:/File-Transfer' <image-id>
+   > docker run --volume ${PWD}:/File-Transfer --volume /tmp/.X11-unix:/tmp/.X11-unix --device=/dev/dri:/dev/dri --env DISPLAY --net host -it file_transfer:v1.0
    ```
 
-2. The repo will be mounted to the docker container. Next, using `cmake` the project will be compiled. Inside the docker container run the following commands:
+1. From inside the docker container, build and run the app.
+   
+   ```shell
+   > /bin/sh /File-Transfer/build-and-run.sh
+   ```
 
-    ```shell
-    > cd /File-Transfer/
-    > mkdir build
-    > cd build
-    > cmake ../
-    > cmake --build .
-    ```
+## Todo
 
-3. This will generate the executable binary in the docker container.
+1. Figure out a way to generate the final binary bundled with all required static libraries.
