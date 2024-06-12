@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
+        <file>qml/SendFile.qml</file>
+        <file>qml/LoadingBox.qml</file>
     </qresource>
 </RCC>
