@@ -14,18 +14,19 @@ int main(int argc, char *argv[]){
     // Standard Qt/QML Configuration
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));
 
-    // NetworkManager discovery;
-    // ReceivingServer receive(discovery.getLocalHostInterface());
+    NetworkManager discovery;
+    // discovery.initHostInterfaces();
+    // ReceivingServer receivingServer(discovery.getLocalHostInterface());
 
     // Expose backend objects to QML
-    QQmlContext *ctxt;
+    QQmlContext *ctxt = engine.rootContext();
     QVector<QQmlContext::PropertyPair> qmlProperties;
-    ctxt = engine.rootContext();
     qmlProperties.push_back(QQmlContext::PropertyPair{"discovery", QVariant::fromValue(&discovery)});
+    // qmlProperties.push_back(QQmlContext::PropertyPair{"receivingServer", QVariant::fromValue(&receivingServer)});
     ctxt->setContextProperties(qmlProperties);
 
+    engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));
 
     return app.exec();
 }

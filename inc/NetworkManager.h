@@ -2,44 +2,34 @@
 #define NETWORKMANANGER_H
 
 #include <QNetworkInterface>
-#include "NetworkInterface.h"
+#include <QSharedPointer>
+#include <QVariant>
+#include <QJsonObject>
 
+#include "NetworkInterface.h"
+#include "DiscoveryThread.h"
 
 /**
  * @brief Manages the host interfaces on the network.
 */
-class NetworkManager{
+class NetworkManager : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QVariantList hosts MEMBER m_hostInterfaces NOTIFY sig_hostsUpdated)
+    
 public:
-    NetworkManager();
+    NetworkManager(QObject *parent = nullptr);
     ~NetworkManager();
 
-    
-    QList<NetworkInterface> getLocalHostInterfaces() const {return m_localHostInterfaces; };
-    NetworkInterface getLocalHostInterface();
+    //!< \brief Set & Discover hosts interfaces on the localhost network.
+    Q_INVOKABLE void initHostInterfaces();
 
-    /**
-     * @brief Discover hosts interfaces on the given network.
-     * Similar to `nmap 192.168.0.0/24`
-    */
-    QList<NetworkInterface> getHostInterfaces(NetworkInterface interface);
+    QVariantList m_hostInterfaces;
 
 private:
+    DiscoveryThread *m_discoveryThread;
 
-    /**
-     * @brief List of local system's network interfaces like Wifi, ethernet, etc.
-    */
-    QList<NetworkInterface> m_localHostInterfaces;
-
-    /**
-     * @brief Discover interfaces on the local system.
-     * Similar to the output of `ifconfig` or `ipconfig`
-    */
-    void setLocalHostInterfaces();
-
-    /**
-     * @brief Helper function to parse the nmap response & return a list of hosts IP address.
-    */
-    QList<QHostAddress> parseNmapResp(QString resp);
+signals:
+    void sig_hostsUpdated();
 };
 
 #endif

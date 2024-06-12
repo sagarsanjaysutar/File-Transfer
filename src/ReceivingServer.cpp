@@ -1,15 +1,16 @@
 #include "ReceivingServer.h"
 #include "networknamespace.h"
 
-ReceivingServer::ReceivingServer(NetworkInterface interface) :
+ReceivingServer::ReceivingServer(NetworkInterface interface, QObject* parent) :
+    QObject(parent),
     m_interface(interface)
 {
     qDebug() << "ReceivingServer: Constructor called.";
-    initServer();
 }
 
 ReceivingServer::~ReceivingServer(){
     qDebug() << "ReceivingServer: Destructor called.";
+    m_server.close();
 }
 
 void ReceivingServer::initServer(){
@@ -26,11 +27,11 @@ void ReceivingServer::initServer(){
     });
 
     qDebug() << "ReceivingServer: Waiting for new connection...";
-    m_server.waitForNewConnection(10000);
+    m_server.waitForNewConnection(30000);
 }
 
 void ReceivingServer::receiveFile(){
-    qDebug() << "Receiving file...";
+    initServer();
     // in.startTransaction();
 
     // QString nextFortune;

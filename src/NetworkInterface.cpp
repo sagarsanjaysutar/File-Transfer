@@ -1,39 +1,64 @@
 #include "NetworkInterface.h"
 
-NetworkInterface::NetworkInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type) : 
+
+NetworkInterface::NetworkInterface(QObject* parent) :
+    QObject(parent),
+    m_gatewayAddress(""),
+    m_ipAddress(""),
+    m_maskAddress(""),
     m_CIDRAddress(""),
+    m_name(""),
+    m_type(QNetworkInterface::Unknown)
+{
+}
+
+NetworkInterface::NetworkInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type, QObject* parent) : 
+    QObject(parent),
+    m_gatewayAddress(""),
     m_ipAddress(ip),
     m_maskAddress(mask),
+    m_CIDRAddress(""),
     m_name(name),
     m_type(type)
 {
-    // Set CIDR Address
+    setGatewayAddress(m_ipAddress);
     setCIDRAddress(m_ipAddress, m_maskAddress);
 }
 
-NetworkInterface::NetworkInterface(QNetworkInterface networkInterface) :
-    m_CIDRAddress(""),
-    m_ipAddress(""),
-    m_maskAddress(""),
-    m_name("")
-{
-    // Set IP & subnet mask address
-    for(QNetworkAddressEntry entry : networkInterface.addressEntries()){
-        if(entry.ip().protocol() == QAbstractSocket::IPv4Protocol){
-            setIpAddress(entry.ip());
-            setMaskAddress(entry.netmask());
-            break;
-        }
-    }
+NetworkInterface::NetworkInterface(const NetworkInterface &interface, QObject* parent) :
+    QObject(parent),
+    m_gatewayAddress(interface.getGatewayAddress()),
+    m_ipAddress(interface.getIpAddress()),
+    m_maskAddress(interface.getMaskAddress()),
+    m_CIDRAddress(interface.getCIDRAddress()),
+    m_name(interface.getName()),
+    m_type(interface.getType())
+{}
 
-    // Set CIDR Address
-    setCIDRAddress(m_ipAddress, m_maskAddress);
-    
-    // Interface name
-    setName(networkInterface.name());
+void NetworkInterface::setGatewayAddress(const QHostAddress ipAddress){
+
+    if(ipAddress.isNull()){
+        qDebug() << "NetworkInterface: Can't set Gateway address, Invalid IP.";
+        return;
+    }
+    else{
+        // Build the Gateway address from IP address:
+        // e.g. 192.168.0.192 -> 192.168.0.1
+        QStringList ipAddrList = ipAddress.toString().split(".");
+
+        // Replace the host number of the IP address with 1.
+        ipAddrList[ipAddrList.count() - 1] = "1";
+
+        m_gatewayAddress = QHostAddress(ipAddrList.join("."));
+    }
 }
 
 void NetworkInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subnetMask){
+
+    if(ipAddress.isNull() || subnetMask.isNull()){
+        qDebug() << "NetworkInterface: Can't set CIDR address, Invalid IP & Mask.";
+        return;
+    }
     
     // Convert the IP Address into integer.
     quint32 subnetAddrInt = subnetMask.toIPv4Address();
@@ -51,7 +76,7 @@ void NetworkInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subne
     // e.g. 192.168.0.192 -> 192.168.0.0/24
     QStringList ipAddrList = ipAddress.toString().split(".");
 
-    // Replace the host number of the IP address with 0.
+    // Replace the host ID of the IP address (last part) with 0.
     ipAddrList[ipAddrList.count() - 1] = "0";
 
     // Append the CIDR number to the IP.

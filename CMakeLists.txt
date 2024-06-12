@@ -6,17 +6,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include Qt6
-set(Vulkan_INCLUDE_DIR "/usr/include/vulkan")
-set(XKB_INCLUDE_DIR "/usr/include/xcb/")
-set(XKB_LIBRARY "/usr/lib/x86_64-linux-gnu/")
-
 find_package(Qt6 REQUIRED COMPONENTS Core Network Gui Qml Quick)
 message(STATUS "QT6 found: ${Qt6_FOUND} at ${Qt6_DIR}" )
 
 qt_standard_project_setup()
 
 # Include header files
-include_directories(${PROJECT_SOURCE_DIR}/inc)
+file(GLOB_RECURSE HEADERS ${PROJECT_SOURCE_DIR}/inc/*.h)
 
 # Include source files
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
@@ -25,5 +21,6 @@ file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 qt_add_resources(RESOURCES ${PROJECT_SOURCE_DIR}/res/qml.qrc ${PROJECT_SOURCE_DIR}/res/fonts.qrc) 
 
 # Configure the executable
-add_executable(file_transfer ${SOURCES} ${RESOURCES})
+add_executable(file_transfer ${HEADERS} ${SOURCES} ${RESOURCES})
+target_include_directories(file_transfer PUBLIC ${PROJECT_SOURCE_DIR}/inc)
 target_link_libraries(file_transfer PRIVATE Qt6::Core Qt6::Network Qt6::Qml Qt6::Gui Qt6::Quick)

@@ -5,7 +5,7 @@
 
 namespace Network{
 
-    static const quint16 PORT = 5444;
+    static const quint16 PORT = 80;
 }
 
 #endif
