@@ -12,7 +12,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "docker build -t file_transfer:v1.0 ${workspaceFolder} && docker run --volume ${workspaceFolder}:/File-Transfer --volume /tmp/.X11-unix:/tmp/.X11-unix --device=/dev/dri:/dev/dri --env DISPLAY --net host -it file_transfer:v1.0  /File-Transfer/misc/execute.sh"
+        "docker build -t file_transfer:v1.0 ${workspaceFolder} && docker run --volume ${workspaceFolder}:/File-Transfer --volume /tmp/.X11-unix:/tmp/.X11-unix --device=/dev/dri:/dev/dri --env DISPLAY --net host -it file_transfer:v1.0  /File-Transfer/.vscode/execute.sh"
       ],
       "group": {
         "kind": "build",
