@@ -7,29 +7,35 @@
 #include <QThread>
 #include <QProcess>
 #include <QRegularExpression>
+#include "DeviceInterface.h"
 
-#include "NetworkInterface.h"
-
-/**
- * \brief Discovers the host interfaces on the localhost network. Similar to `nmap 192.168.0.0/24`
-*/
+//!< \brief Discovers the device interfaces connected to the ethernet or Wifi network.
 class DiscoveryThread : public QThread{
+
     Q_OBJECT
+
 public:
+
     DiscoveryThread(QObject *parent);
+
 private:
 
-    //!< @brief Runs the nmap process for discovering hosts.
+    //!< \brief Runs the nmap process for discovering devices on the localhost network.
     void run() override;
 
-    //!< @brief Returns a list of local system's network interfaces like Wifi, ethernet, etc.
-    QList<QSharedPointer<NetworkInterface>> getLocalHostInterfaces();
+    //!< \brief Returns the list of interfaces on a localhost/local computer.
+    QList<QSharedPointer<DeviceInterface>> getLocalHostInterfaces();
 
-    //!< @brief Helper function to parse the nmap response & return a list of hosts IP address.
-    QList<QHostAddress> parseNmapResp(QString resp);
+    //!< \brief Helper function to parse the nmap response & return a list of device IP addresses on localhost network.
+    QList<QHostAddress> parseNmapResp(QString);
 
 signals: 
-    void sig_discoveredHosts(QList<QSharedPointer<NetworkInterface>> hosts);
+
+    //!< \brief Localhost interface.
+    void sig_detectedLocalHostInterface(QSharedPointer<DeviceInterface>);
+
+    //!< \brief Signal emitting the discovered devices on the localhost network.
+    void sig_discoveredDevicesOnNetwork(QList<QSharedPointer<DeviceInterface>>);
 };
 
 #endif

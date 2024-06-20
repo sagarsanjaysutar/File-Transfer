@@ -122,7 +122,7 @@ ApplicationWindow{
                 radius: 5
             }
 
-            onClicked: { receivingServer.receiveFile() }
+            onClicked: { receivingServer.initServer() }
         }
     }
 }

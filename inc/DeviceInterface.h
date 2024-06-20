@@ -1,5 +1,5 @@
-#ifndef NETWORKINTERFACE_H
-#define NETWORKINTERFACE_H
+#ifndef DEVICEINTERFACE_H
+#define DEVICEINTERFACE_H
 
 #include <QHostAddress>
 #include <QNetworkInterface>
@@ -7,15 +7,15 @@
 #include <QObject>
 
 /**
- * @brief Represents a Network Interface e.g. a local computer on the network.
+ * \brief A network interface representing a device connected to the ethernet or Wifi network.
 */
-class NetworkInterface : public QObject {
+class DeviceInterface : public QObject {
     Q_OBJECT
 public:
     
-    NetworkInterface(QObject* parent = nullptr);
-    NetworkInterface(QHostAddress ip, QHostAddress mask, QString name = "", QNetworkInterface::InterfaceType type = QNetworkInterface::Unknown, QObject* parent = nullptr);
-    NetworkInterface(const NetworkInterface &interface, QObject* parent = nullptr);
+    DeviceInterface(QObject* parent = nullptr);
+    DeviceInterface(QHostAddress ip, QHostAddress mask, QString name = "", QNetworkInterface::InterfaceType type = QNetworkInterface::Unknown, QObject* parent = nullptr);
+    DeviceInterface(const DeviceInterface &interface, QObject* parent = nullptr);
 
     // Getters
     QHostAddress getGatewayAddress() const { return m_gatewayAddress; }
@@ -35,7 +35,7 @@ private:
     void setCIDRAddress(QHostAddress ipAddress, QHostAddress mask);
     void setName(const QString name);
     
-    QHostAddress m_gatewayAddress;              // Network Address. For 192.168.0.168 -> 192.168.0.1
+    QHostAddress m_gatewayAddress;              // Network Address. For 192.168.0.162 -> 192.168.0.1
     QHostAddress m_ipAddress;                   // IP Address
     QHostAddress m_maskAddress;                 // Netmask address
     QString m_CIDRAddress;                      // Network address: 192.168.1.0/24
@@ -45,6 +45,6 @@ private:
 signals:
     void sig_nameChanged();
 };
-Q_DECLARE_METATYPE(NetworkInterface)
+Q_DECLARE_METATYPE(DeviceInterface)
 
 #endif

@@ -16,14 +16,13 @@ int main(int argc, char *argv[]){
     QQmlApplicationEngine engine;
 
     NetworkManager discovery;
-    // discovery.initHostInterfaces();
-    // ReceivingServer receivingServer(discovery.getLocalHostInterface());
+    ReceivingServer receivingServer;
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();
     QVector<QQmlContext::PropertyPair> qmlProperties;
     qmlProperties.push_back(QQmlContext::PropertyPair{"discovery", QVariant::fromValue(&discovery)});
-    // qmlProperties.push_back(QQmlContext::PropertyPair{"receivingServer", QVariant::fromValue(&receivingServer)});
+    qmlProperties.push_back(QQmlContext::PropertyPair{"receivingServer", QVariant::fromValue(&receivingServer)});
     ctxt->setContextProperties(qmlProperties);
 
     engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));

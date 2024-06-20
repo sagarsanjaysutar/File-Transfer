@@ -4,22 +4,26 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QObject>
-#include "NetworkInterface.h"
+#include "DeviceInterface.h"
 
 class ReceivingServer : public QObject{
     Q_OBJECT
 public:
-    ReceivingServer(NetworkInterface interface, QObject* parent = nullptr);
+    ReceivingServer(QObject* parent = nullptr);
     ~ReceivingServer();
 
     Q_INVOKABLE void receiveFile();
 
-private:  
-    NetworkInterface m_interface;
+    //!< \brief A string-overloaded function for initServer(...).
+    Q_INVOKABLE void initServer(QString address);
+
+private:
+    DeviceInterface m_interface;
     QTcpServer m_server;
     QTcpSocket* m_clientConnection;
 
-    void initServer();
+    //!< \brief Starts the TCP server on the given IP address to listen for incoming connections.
+    void initServer(QHostAddress address);
 };
 
 #endif

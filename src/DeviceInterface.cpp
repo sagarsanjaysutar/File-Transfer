@@ -1,7 +1,7 @@
-#include "NetworkInterface.h"
+#include "DeviceInterface.h"
 
 
-NetworkInterface::NetworkInterface(QObject* parent) :
+DeviceInterface::DeviceInterface(QObject* parent) :
     QObject(parent),
     m_gatewayAddress(""),
     m_ipAddress(""),
@@ -12,7 +12,7 @@ NetworkInterface::NetworkInterface(QObject* parent) :
 {
 }
 
-NetworkInterface::NetworkInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type, QObject* parent) : 
+DeviceInterface::DeviceInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type, QObject* parent) : 
     QObject(parent),
     m_gatewayAddress(""),
     m_ipAddress(ip),
@@ -25,7 +25,7 @@ NetworkInterface::NetworkInterface(QHostAddress ip, QHostAddress mask, QString n
     setCIDRAddress(m_ipAddress, m_maskAddress);
 }
 
-NetworkInterface::NetworkInterface(const NetworkInterface &interface, QObject* parent) :
+DeviceInterface::DeviceInterface(const DeviceInterface &interface, QObject* parent) :
     QObject(parent),
     m_gatewayAddress(interface.getGatewayAddress()),
     m_ipAddress(interface.getIpAddress()),
@@ -35,10 +35,10 @@ NetworkInterface::NetworkInterface(const NetworkInterface &interface, QObject* p
     m_type(interface.getType())
 {}
 
-void NetworkInterface::setGatewayAddress(const QHostAddress ipAddress){
+void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress){
 
     if(ipAddress.isNull()){
-        qDebug() << "NetworkInterface: Can't set Gateway address, Invalid IP.";
+        qDebug() << "DeviceInterface: Can't set Gateway address, Invalid IP.";
         return;
     }
     else{
@@ -53,10 +53,10 @@ void NetworkInterface::setGatewayAddress(const QHostAddress ipAddress){
     }
 }
 
-void NetworkInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subnetMask){
+void DeviceInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subnetMask){
 
     if(ipAddress.isNull() || subnetMask.isNull()){
-        qDebug() << "NetworkInterface: Can't set CIDR address, Invalid IP & Mask.";
+        qDebug() << "DeviceInterface: Can't set CIDR address, Invalid IP & Mask.";
         return;
     }
     
@@ -83,17 +83,17 @@ void NetworkInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subne
     m_CIDRAddress = ipAddrList.join(".").append("/").append(QString::number(cidr));
 }
 
-void NetworkInterface::setIpAddress(const QHostAddress ipAddress) {
+void DeviceInterface::setIpAddress(const QHostAddress ipAddress) {
     if(m_ipAddress != ipAddress)
         m_ipAddress = ipAddress;
 }
 
-void NetworkInterface::setMaskAddress(const QHostAddress maskAddress) {
+void DeviceInterface::setMaskAddress(const QHostAddress maskAddress) {
     if(m_maskAddress != maskAddress)
         m_maskAddress = maskAddress;
 }
 
-void NetworkInterface::setName(const QString name) {
+void DeviceInterface::setName(const QString name) {
     if(m_name != name)
         m_name = name;
 }

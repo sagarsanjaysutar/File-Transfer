@@ -2,7 +2,7 @@
 #include "networknamespace.h"
 
 DiscoveryThread::DiscoveryThread(QObject *parent) :
-QThread(parent)
+    QThread(parent)
 {
     qDebug() << "DiscoveryThread: Constructor called.";
 }
@@ -11,32 +11,31 @@ void DiscoveryThread::run(){
 
     qDebug() << "DiscoveryThread: Starting the discovery process...";
     
-    // List of all localhost interfaces.
-    QList<QSharedPointer<NetworkInterface>> localHostInterfaces = getLocalHostInterfaces(); 
-    
-    // Search hosts on the first interface.
-    QSharedPointer<NetworkInterface> interface = localHostInterfaces.at(0);
+    QList<QSharedPointer<DeviceInterface>> localHostInterfaces = getLocalHostInterfaces();
+
+    QSharedPointer<DeviceInterface> localHostInterface = localHostInterfaces.at(0);
+    emit sig_detectedLocalHostInterface(localHostInterface);
 
     // List of empty interfaces.
-    QList<QSharedPointer<NetworkInterface>> hostsOnInterface;
+    QList<QSharedPointer<DeviceInterface>> devicesOnNetwork;
     
     // nmap response
     QString nmapResp;
 
-    // Initialise nmap process to search hosts.
+    // Initialise nmap process to search devices on localhost network.
     QProcess *nmapProcess = new QProcess();
-    QObject::connect(nmapProcess, &QProcess::started, [=](){ qDebug() << "NetworkManager: Discovery execution started.";});
-    QObject::connect(nmapProcess, &QProcess::finished, [=](int exitCode, QProcess::ExitStatus exitStatus){ qDebug() << "NetworkManager: Discovery execution finished." << exitCode << exitStatus;});
+    QObject::connect(nmapProcess, &QProcess::started, [=](){ qDebug() << "DiscoveryThread: Discovery execution started.";});
+    QObject::connect(nmapProcess, &QProcess::finished, [=](int exitCode, QProcess::ExitStatus exitStatus){ qDebug() << "DiscoveryThread: Discovery execution finished." << exitCode << exitStatus;});
     QObject::connect(nmapProcess, &QProcess::readyReadStandardOutput, [&](){ nmapResp.append(nmapProcess->readAllStandardOutput()); });
-    QObject::connect(nmapProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ qDebug() << "Error Occured " << error; });
-    QObject::connect(nmapProcess, &QProcess::stateChanged, [=](QProcess::ProcessState state){ qDebug() << "State Changed " << state; });
+    QObject::connect(nmapProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ qDebug() << "DiscoveryThread: Error Occured " << error; });
+    QObject::connect(nmapProcess, &QProcess::stateChanged, [=](QProcess::ProcessState state){ qDebug() << "DiscoveryThread: State Changed " << state; });
     
-    // Make a list of localhost to exclude out of the search as we won't be sharing files within same computer.
+    // List of localhost interfaces to exclude out as we won't be sharing files within same machine.
     QString excludedInterfacesStr;
-    for(QSharedPointer<NetworkInterface> interface : localHostInterfaces){
-        excludedInterfacesStr.append(interface.data()->getGatewayAddress().toString());
+    for(QSharedPointer<DeviceInterface> device : localHostInterfaces){
+        excludedInterfacesStr.append(device.data()->getGatewayAddress().toString());
         excludedInterfacesStr.append(",");
-        excludedInterfacesStr.append(interface.data()->getIpAddress().toString());
+        excludedInterfacesStr.append(device.data()->getIpAddress().toString());
         excludedInterfacesStr.append(",");
     }
 
@@ -44,7 +43,7 @@ void DiscoveryThread::run(){
     nmapProcess->setProgram("nmap");
     nmapProcess->setArguments(QStringList() 
             << "-p" << QString::number(Network::PORT)
-            << interface.data()->getCIDRAddress()
+            << localHostInterface.data()->getCIDRAddress()
             << "--exclude"
             << excludedInterfacesStr
             );
@@ -52,14 +51,14 @@ void DiscoveryThread::run(){
 
     // Wait for the process to start
     if (!nmapProcess->waitForStarted()){
-        qDebug() << "NetworkManager: Failed to start the discovery process.";
-        emit sig_discoveredHosts(hostsOnInterface);
+        qDebug() << "DiscoveryThread: Failed to start the discovery process.";
+        emit sig_discoveredDevicesOnNetwork(devicesOnNetwork);
     }
 
     // Wait until the process is completed.
     if (!nmapProcess->waitForFinished()){
-        qDebug() << "NetworkManager: Discovery process timedout.";
-        emit sig_discoveredHosts(hostsOnInterface);
+        qDebug() << "DiscoveryThread: Discovery process timedout.";
+        emit sig_discoveredDevicesOnNetwork(devicesOnNetwork);
     }
 
     // Misc. cleanup
@@ -68,17 +67,17 @@ void DiscoveryThread::run(){
     // Populate hostsOnInterface with the generated IP address from nmap process.
     // Note: All the IP address found by a nmap search would have same mask address.
     for(QHostAddress ipAddr : parseNmapResp(nmapResp)){
-        hostsOnInterface.append(QSharedPointer<NetworkInterface>(new NetworkInterface(ipAddr, interface.data()->getMaskAddress())));
+        devicesOnNetwork.append(QSharedPointer<DeviceInterface>(new DeviceInterface(ipAddr, localHostInterface.data()->getMaskAddress())));
     }
 
-    qDebug() << "NetworkManager: Discovery execution completed. Found" << hostsOnInterface.count() << "hosts on" << interface.data()->getIpAddress().toString();
-    emit sig_discoveredHosts(hostsOnInterface);
+    qDebug() << "DiscoveryThread: Discovery execution completed. Found" << devicesOnNetwork.count() << " devices on" << localHostInterface.data()->getIpAddress().toString();
+    emit sig_discoveredDevicesOnNetwork(devicesOnNetwork);
 }
 
-QList<QSharedPointer<NetworkInterface>> DiscoveryThread::getLocalHostInterfaces(){
+QList<QSharedPointer<DeviceInterface>> DiscoveryThread::getLocalHostInterfaces(){
 
-    qDebug() << "DiscoveryThread: Getting localhost interfaces.";
-    QList<QSharedPointer<NetworkInterface>> localHostInterfaces;
+    qDebug() << "DiscoveryThread: Getting localhost interfaces...";
+    QList<QSharedPointer<DeviceInterface>> localHostInterfaces;
 
     // Iterate the network interfaces on the local system.
     for(const QNetworkInterface &interface : QNetworkInterface::allInterfaces()){
@@ -88,9 +87,9 @@ QList<QSharedPointer<NetworkInterface>> DiscoveryThread::getLocalHostInterfaces(
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback())
             {
-                qDebug() << "NetworkManager: Found" << interface.humanReadableName();
+                qDebug() << "DiscoveryThread: Found" << interface.humanReadableName();
                 localHostInterfaces.append(
-                    QSharedPointer<NetworkInterface>(new NetworkInterface(
+                    QSharedPointer<DeviceInterface>(new DeviceInterface(
                         entry.ip(),
                         entry.netmask(), 
                         interface.humanReadableName(), 
@@ -107,19 +106,19 @@ QList<QSharedPointer<NetworkInterface>> DiscoveryThread::getLocalHostInterfaces(
 QList<QHostAddress> DiscoveryThread::parseNmapResp(QString resp){
 
     if(resp.isEmpty()){
-        qDebug() << "NetworkManager: Nmap response is empty.";
+        qDebug() << "DiscoveryThread: Nmap response is empty.";
         return QList<QHostAddress>();
     }
 
     // Extract list of IP addresses from the nmap response.
-    QList<QHostAddress> hosts = QList<QHostAddress>();
+    QList<QHostAddress> deviceAddressList = QList<QHostAddress>();
 
     // Parse the nmap response. Refer the nmap output to understand the following logic
     QStringList dataList = resp.split("\n");
     int idx = 0;
     while(idx < dataList.count()){
         QString line = dataList.at(idx);
-        qDebug() << line;
+        // qDebug() << line;
         if(line.contains("Nmap scan report")){
             QString portLine = dataList.at(idx + 4);
             
@@ -127,7 +126,7 @@ QList<QHostAddress> DiscoveryThread::parseNmapResp(QString resp){
                 // Regex to fetch the IP address.
                 QRegularExpression rx("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
                 QRegularExpressionMatch ipMatch = rx.match(line);
-                hosts << QHostAddress(ipMatch.captured(0));
+                deviceAddressList << QHostAddress(ipMatch.captured(0));
                 // qDebug() << ipMatch.captured(0);
             }
         }
@@ -135,5 +134,5 @@ QList<QHostAddress> DiscoveryThread::parseNmapResp(QString resp){
         idx++;
     }
     
-    return hosts;
+    return deviceAddressList;
 }

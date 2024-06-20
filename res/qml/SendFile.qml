@@ -27,7 +27,7 @@ Popup{
             onAccepted: {
                 console.log("You chose: " + fileDialog.selectedFiles)
                 loadingBox.active = true
-                discovery.initHostInterfaces();
+                discovery.startDeviceDiscovery();
             }
             onRejected: page.close();
         }
@@ -48,14 +48,14 @@ Popup{
         ListView{
             id: hostList
 
-            //: Hosts/devices founds on the network.
-            property var hosts: discovery.hosts
-            onHostsChanged: {
+            //: Devices founds on the localhost network.
+            property var devicesOnNetwork: discovery.devicesOnNetwork
+            onDevicesOnNetworkChanged: {
                 loadingBox.active = false
 
                 //: Add devices to the listview model.
-                for(var host in hosts){
-                    interfaceList.add({"ipAddr": hosts[host].getIpAddressStr()});
+                for(var device in devicesOnNetwork){
+                    interfaceList.add({"ipAddr": devicesOnNetwork[device].getIpAddressStr()});
                 }
             }
 
@@ -64,14 +64,14 @@ Popup{
             height: parent.height * 0.80
             spacing: 4
             clip: true
-            visible: hosts.length > 0
+            visible: hostList.devicesOnNetwork.length > 0
 
             //: Title
             header: Column{
                 id: hostListHeader
                 width: parent.width
                 height: hostList.height * 0.20
-                visible: hosts.length > 0
+                visible: hostList.devicesOnNetwork.length > 0
                 spacing: 5
 
                 Text{
