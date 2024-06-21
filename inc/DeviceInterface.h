@@ -6,9 +6,7 @@
 #include <QString>
 #include <QObject>
 
-/**
- * \brief A network interface representing a device connected to the ethernet or Wifi network.
-*/
+//!< \brief A network interface representing a device connected to the ethernet or Wifi network.
 class DeviceInterface : public QObject {
     Q_OBJECT
 public:
@@ -35,10 +33,11 @@ private:
     void setCIDRAddress(QHostAddress ipAddress, QHostAddress mask);
     void setName(const QString name);
     
-    QHostAddress m_gatewayAddress;              // Network Address. For 192.168.0.162 -> 192.168.0.1
-    QHostAddress m_ipAddress;                   // IP Address
-    QHostAddress m_maskAddress;                 // Netmask address
-    QString m_CIDRAddress;                      // Network address: 192.168.1.0/24
+    // Variables
+    QHostAddress m_gatewayAddress;              // Gateway Address. e.g Gateway of 192.168.0.162 is 192.168.0.1
+    QHostAddress m_ipAddress;                   // IP Address e.g 192.168.0.162
+    QHostAddress m_maskAddress;                 // Mask address
+    QString m_CIDRAddress;                      // CIDR Network address: e.g. CIDR Address of 192.168.0.162 is 192.168.0.0/24
     QString m_name;                             // Interface name
     QNetworkInterface::InterfaceType m_type;    // Interface type: Wifi, ethernet, etc.
 

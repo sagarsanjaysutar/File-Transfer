@@ -9,21 +9,18 @@
 class ReceivingServer : public QObject{
     Q_OBJECT
 public:
-    ReceivingServer(QObject* parent = nullptr);
+    ReceivingServer(QSharedPointer<DeviceInterface> localHostInteface, QObject* parent = nullptr);
     ~ReceivingServer();
 
     Q_INVOKABLE void receiveFile();
 
-    //!< \brief A string-overloaded function for initServer(...).
-    Q_INVOKABLE void initServer(QString address);
+    //!< \brief Starts a TCP server on the localhost network to listen for incoming connections.
+    Q_INVOKABLE void initServer();
 
 private:
-    DeviceInterface m_interface;
     QTcpServer m_server;
     QTcpSocket* m_clientConnection;
-
-    //!< \brief Starts the TCP server on the given IP address to listen for incoming connections.
-    void initServer(QHostAddress address);
+    QSharedPointer<DeviceInterface> m_localHostInteface;
 };
 
 #endif

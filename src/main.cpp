@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
     QQmlApplicationEngine engine;
 
     NetworkManager discovery;
-    ReceivingServer receivingServer;
+    ReceivingServer receivingServer(discovery.getLocalHostInterfaces().at(0));
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();
