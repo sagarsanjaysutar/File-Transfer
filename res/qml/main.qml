@@ -15,11 +15,13 @@ ApplicationWindow{
     background: Rectangle{
         anchors.fill: parent
     }
+    
 
     //: Loads up the font.
     FontLoader {
+        // /home/ssutar/Tutorials/File-Transfer/res/fonts/Poppins/Poppins-Light.ttf
         id: webFont
-        source: "qrc:fonts/Roboto/Roboto-Regular.ttf"
+        source: "qrc:fonts/Poppins/Poppins-Regular.ttf"
     }
 
     //: Loader for "Send File" Page.
@@ -41,88 +43,187 @@ ApplicationWindow{
         }
     }
 
-    ColumnLayout {
-        anchors.centerIn: parent
+    //: Loader for "Receive File" Page.
+    Loader{
+        id: receiveFilePage
+        width: window.width
+        height: window.height
 
-        //: Title
-        Text{
-            text: "File Transfer"
-            color: "#606060"
-            font{
-                capitalization: Font.AllUppercase
-                pixelSize: 30
-                weight: Font.DemiBold
-                family: "Roboto"
-            }
+        sourceComponent: ReceiveFile{
+            parent: window.overlay
+            width: window.width
+            height: window.height
+            
+        } 
+        active: false
+
+        Connections{
+            target: receiveFilePage.item
+            function onClosed(){ receiveFilePage.active = false }
         }
+    }
 
-        //: Subtitle
-        Text{
-            text: "v1.0"
-            color: "#282828"
-            font{
-                italic: true
-                pixelSize: 15
-                weight: Font.Light
-                family: "Roboto"
-            }
-        }
+    RowLayout{
+        anchors.fill: parent
 
-        //: Send button
-        Button{
-            id: sendBtn
-            text: "SEND"
-            Layout.preferredWidth: 250
-            Layout.preferredHeight: 40
-            contentItem: Text{
-                text: sendBtn.text
-                font{
-                    pixelSize: 20
-                    family: "Roboto"
-                }
+        ColumnLayout {
+            Layout.preferredWidth: parent.width/2
+            Layout.alignment: Qt.AlignRight
+            Layout.rightMargin: 10
+            z: 1
+            spacing: 5
+
+            //: Title
+            Text{
+                text: "File Transfer"
+                Layout.preferredWidth: parent.width
+                horizontalAlignment: Text.AlignRight
                 color: "#606060"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            } 
 
-            background: Rectangle{
-                width: sendBtn.width
-                height: sendBtn.height
-                color: "#d3d3d3"
-                radius: 5
-            }
-
-            onClicked: { 
-                sendFilePage.active = true
-                sendFilePage.item.open()
-            } 
-        }
-        
-        //: Receive Button
-        Button{
-            id: receiveBtn
-            text: "RECEIVE"
-            Layout.preferredWidth: 250
-            Layout.preferredHeight: 40
-            contentItem: Text{
-                text: receiveBtn.text
                 font{
-                    pixelSize: 20
-                    family: "Roboto"
+                    capitalization: Font.MixedCase
+                    pixelSize: 30
+                    weight: Font.ExtraBold
+                    family: "Poppins"
                 }
+            }
+
+            //: Subtitle
+            Text{
+                text: "Securely transfer files on a local network."
+                Layout.preferredWidth: parent.width
+                horizontalAlignment: Text.AlignRight
                 color: "#606060"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+
+                font{
+                    italic: true
+                    pixelSize: 15
+                    weight: Font.DemiBold
+                    family: "Poppins"
+                }
             }
 
-            background: Rectangle{
-                width: receiveBtn.width
-                height: receiveBtn.height
-                color: "#d3d3d3"
-                radius: 5
+            //: Send button
+            Button{
+                id: sendBtn
+                text: "Send"
+                Layout.preferredWidth: parent.width/2
+                Layout.preferredHeight: 40
+                Layout.alignment: Qt.AlignRight
+
+                contentItem: Text{
+                    text: sendBtn.text
+                    font{
+                        pixelSize: 20
+                        weight: Font.Bold
+                        family: "Poppins"
+                    }
+                    color: "#606060"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                } 
+
+                background: Rectangle{
+                    width: sendBtn.width
+                    height: sendBtn.height
+                    color: "#d3d3d3"
+                    radius: 2
+                }
+
+                onClicked: { 
+                    sendFilePage.active = true
+                    sendFilePage.item.open()
+                } 
+            }
+            
+            //: Receive Button
+            Button{
+                id: receiveBtn
+                text: "Receive"
+                Layout.preferredWidth: parent.width/2
+                Layout.preferredHeight: 40
+                Layout.alignment: Qt.AlignRight
+
+                contentItem: Text{
+                    text: receiveBtn.text
+                    font{
+                        pixelSize: 20
+                        weight: Font.Bold
+                        family: "Poppins"
+                    }
+                    color: "#606060"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                background: Rectangle{
+                    width: receiveBtn.width
+                    height: receiveBtn.height
+                    color: "#d3d3d3"
+                    radius: 2
+                }
+
+                onClicked: { 
+                    receiveFilePage.active = true
+                    receiveFilePage.item.open()
+                }
+            }
+        }
+
+        Rectangle{
+            id: rightPanel
+            // anchors.right: parent.right
+            Layout.preferredWidth: parent.width/2
+            Layout.preferredHeight: parent.height
+            color: "transparent"
+            border.width: 0.5
+            border.color: "#33d3d3d3"
+            z: 0
+
+            Rectangle{
+                anchors.top: parent.top
+                anchors.topMargin: -100
+                anchors.right: parent.right
+                anchors.rightMargin: -100
+                property int size: parent.width/1.2
+                width: size
+                height: size
+                radius: size/2
+                color: "transparent"
+                border.width: 8
+                border.color: "#d3d3d3"
             }
 
-            onClicked: { receivingServer.initServer() }
+
+            Rectangle{
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -parent.height/2
+                // anchors.right: parent.right
+                // anchors.rightMargin: -100
+                property int size: parent.width
+                width: size
+                height: size
+                radius: size/2
+                color: "transparent"
+                border.width: 8
+                border.color: "#d3d3d3"
+            }
+
+            Rectangle{
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: parent.width/8
+                // anchors.bottomMargin: -parent.height/2
+                // anchors.right: parent.right
+                // anchors.rightMargin: -100
+                property int size: parent.width/1.5
+                width: size
+                height: size
+                radius: size/2
+                color: "transparent"
+                border.width: 8
+                border.color: "#d3d3d3"
+            }
+            
         }
     }
 }
