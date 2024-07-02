@@ -8,12 +8,35 @@ Popup{
     id: page
     focus: true
 
+    // Slide-in enter animation
+    enter: Transition {
+        NumberAnimation { 
+            properties: "x";
+            from: x + width;
+            to: 0
+            easing.type: Easing.InOutQuad;
+            duration: 400;
+        }
+    }
+
+    // Slide-out exit animation
+    exit: Transition {
+        NumberAnimation { 
+            properties: "x";
+            from: 0
+            to: x + width;
+            easing.type: Easing.InOutQuad;
+            duration: 400;
+        }
+    }
+
     background: Rectangle{
         anchors.fill: parent
     }
 
     //: Open the File Explorer
     onOpened: fileDialog.open() 
+
 
     contentItem: Item{
         
@@ -35,7 +58,6 @@ Popup{
         //: Loading component
         Loader{
             id: loadingBox
-            // anchors.fill: parent
             anchors.centerIn: parent
             sourceComponent: LoadingBox{
                 height: 100
@@ -47,6 +69,15 @@ Popup{
         //: List of devices on the network
         ListView{
             id: hostList
+
+            add: Transition{
+                NumberAnimation { 
+                    properties: "y";
+                    from: y + width;
+                    easing.type: Easing.InOutQuad;
+                    duration: 400;
+                }
+            }
 
             //: Devices founds on the localhost network.
             property var devicesOnNetwork: discovery.devicesOnNetwork
@@ -75,23 +106,24 @@ Popup{
                 spacing: 5
 
                 Text{
-                    text: "Select Device"
+                    text: "Found " + hostList.devicesOnNetwork.length + " devices"
                     color: "#606060"
                     font{
-                        capitalization: Font.AllUppercase
+                        capitalization: Font.MixedCase
                         pixelSize: 30
-                        weight: Font.DemiBold
-                        family: "Roboto"
+                        weight: Font.ExtraBold
+                        family: "Poppins"
                     }
                 }
 
                 Text{
-                    text: "to send: <i>" + fileDialog.selectedFiles + "</i>"
+                    text: "Select a device to send: <i>" + fileDialog.selectedFiles + "</i> file."
+                    color: "#606060"
                     font{
-                        capitalization: Font.AllUppercase
+                        capitalization: Font.MixedCase
                         pixelSize: 15
-                        weight: Font.Normal
-                        family: "Roboto"
+                        weight: Font.DemiBold
+                        family: "Poppins"
                     }
                 }
             }
@@ -102,29 +134,35 @@ Popup{
                 width: parent.width
                 height: 50
                 text: ipAddr
+                // z: 3
 
                 background: Rectangle{
                     id: delegateBackground
                     width: delegateRec.width
                     height: delegateRec.height
-                    radius: 5
-                    border{
+                    color: "#FFFFFF"
+                    z: 1
+
+                    Rectangle {
+                        width: delegateRec.width
+                        height: delegateRec.height + 2
                         color: "#d3d3d3"
-                        width: 1
+                        z: -1
                     }
                 }
 
                 contentItem: Text {
+                    z: 2
                     verticalAlignment: Text.AlignVCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     text: delegateRec.text
                     font{
-                        capitalization: Font.AllUppercase
+                        capitalization: Font.MixedCase
                         pixelSize: 15
-                        weight: Font.DemiBold
-                        family: "Roboto"
+                        weight: Font.Bold
+                        family: "Poppins"
                     }
                 }
 
