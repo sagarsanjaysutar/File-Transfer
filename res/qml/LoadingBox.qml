@@ -4,32 +4,27 @@ import QtQuick
 Rectangle{
     id: container
     width: 300
-    height: 300
+    height: width
     anchors.centerIn: parent
-    
-    //: A black container box.
-    Rectangle{
-        id: mainBox
-        anchors.centerIn: parent
-        anchors.fill: parent
-        color: "#282828"
-    }
-    
+    color: "#282828"
+    z: 0
+
     //: A dot which move within the container.
     Rectangle{
         
-        property int dotSize: mainBox.width/3
+        property int dotSize: container.width/3
         
         id: dot1
         width: dotSize
         height: dotSize
         radius: dotSize
+        z: 1
 
         //: Start point
-        x: mainBox.x
-        y: mainBox.y
+        x: container.x
+        y: container.y
 
-        color: "#d3d3d3"
+        color: "#FFFFFF"
         state: "topLeft"
         
         states: [
@@ -45,7 +40,7 @@ Rectangle{
                 name: "topRight"
                 PropertyChanges{
                     target: dot1
-                    x: mainBox.x + mainBox.width - dotSize
+                    x: container.x + container.width - dotSize
                 }
             },
             State{
@@ -53,8 +48,8 @@ Rectangle{
                 name: "bottomRight"
                 PropertyChanges{
                     target: dot1
-                    x: mainBox.x + mainBox.width - dotSize
-                    y: mainBox.y + mainBox.height - dotSize
+                    x: container.x + container.width - dotSize
+                    y: container.y + container.height - dotSize
                 }
             },
             State{
@@ -62,7 +57,7 @@ Rectangle{
                 name: "bottomLeft"
                 PropertyChanges{
                     target: dot1
-                    y: mainBox.y + mainBox.height - dotSize
+                    y: container.y + container.height - dotSize
                 }
             }
         ]
@@ -81,6 +76,7 @@ Rectangle{
     
     //: Timer which keeps changing the state of the "dot" to move it from one end to another.
     Timer{
+        id: dotDispatchTimer
         repeat: true
         running: true
         interval: 1000
