@@ -2,6 +2,11 @@
 
 A file transfer application that allows users to securely transfer files between two computers.
 
+<video width="600" controls>
+   <source src="demo/demo.mp4" type="video/mp4">
+   Your browser does not support the video tag.
+</video>
+
 _The purpose of this project is to learn various advanced concepts in C++._
 
 ## Concepts
