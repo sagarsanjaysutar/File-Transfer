@@ -2,9 +2,7 @@
 
 A file transfer application that allows users to securely transfer files between two computers.
 
-<video width="600" controls src="demo/demo.mp4" type="video/mp4">
-   Your browser does not support the video tag.
-</video>
+https://github.com/sagarsanjaysutar/File-Transfer/assets/41800823/df94162a-fa58-475e-8184-6c649e7d392b
 
 _The purpose of this project is to learn various advanced concepts in C++._
 
