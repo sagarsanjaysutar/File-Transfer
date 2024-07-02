@@ -19,6 +19,10 @@ void ReceivingServer::initServer(){
         qDebug() << "ReceivingServer: Invalid localhost. Can't start TCP Server.";
         return;
     }
+    else if(m_server.isListening()){
+        qDebug() << "ReceivingServer: TCP Server is already listening for incoming connection on " << m_server.serverAddress() << m_server.serverPort(); 
+        return;
+    }
     else if(!m_server.listen(m_localHostInteface.data()->getIpAddress(), 5000)){
         qDebug() << "ReceivingServer: Unable to start TCP Server on" << m_localHostInteface.data()->getIpAddress() << QString::number(Network::PORT);
         return;
@@ -32,8 +36,8 @@ void ReceivingServer::initServer(){
         QObject::connect(m_clientConnection, &QIODevice::readyRead, [&](){ receiveFile(); });    
     });
 
-    qDebug() << "ReceivingServer: Waiting for new connection...";
-    m_server.waitForNewConnection(30000);
+    // qDebug() << "ReceivingServer: Waiting for new connection...";
+    // m_server.waitForNewConnection(30000);
 }
 
 void ReceivingServer::receiveFile(){
