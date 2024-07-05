@@ -61,7 +61,8 @@ Popup{
             anchors.centerIn: parent
             sourceComponent: LoadingBox{
                 height: 100
-                width: 100                
+                width: 100
+                loadingText: "Searching for devices on local network..."           
             }
             active: false
         }

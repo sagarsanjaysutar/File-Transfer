@@ -1,6 +1,6 @@
-# Advanced File Transfer Utility
+# File Transfer
 
-A file transfer application that allows users to securely transfer files between two computers.
+Securely transfer files on a local network.
 
 https://github.com/sagarsanjaysutar/File-Transfer/assets/41800823/df94162a-fa58-475e-8184-6c649e7d392b
 
@@ -9,7 +9,7 @@ _The purpose of this project is to learn various advanced concepts in C++._
 ## Concepts
 
 1. **Object-Oriented**: SOLID principles are followed.
-2. **Host Discovery**: Host discovery (other computers) via `nmap` is performed.
+2. **Device Discovery**: Device discovery via `nmap` is performed.
 3. **Network Programming**: Peer-to-peer file transfer mechanism via socket programming is implemented.
 4. **Multithreading**: Multithreading is utilized to handle multiple file transfers simultaneously.
 5. **Checksums**: Checksums calculation for files transmission is implemented to ensure data integrity.
@@ -22,7 +22,7 @@ _The purpose of this project is to learn various advanced concepts in C++._
 
 The project compilation will be done in a [docker container](https://hub.docker.com/layers/stateoftheartio/qt6/6.5-gcc-aqt/images/sha256-c0dfd1cd174d855f0157ce0455270b2ee49f5eea4c7a40ffe0e848d41ae4d074?context=explore) which has pre-installed development dependencies.
 
-1. Download and run the docker container. This repo will be mounted to the container. Standard configuration for X11-forwarding is also added to run GUI apps inside the container.
+1. The following commands will Download and run the docker container. This repo will be mounted to the container. Standard configuration for X11-forwarding is also added to run GUI apps inside the container.
 
    ```shell
    > cd File-Transfer

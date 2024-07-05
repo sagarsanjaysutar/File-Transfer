@@ -2,12 +2,29 @@ import QtQuick
 
 //: Loading box
 Rectangle{
+
+    property string loadingText: "Loading..."
+
     id: container
     width: 300
     height: width
     anchors.centerIn: parent
     color: "#282828"
     z: 0
+
+    Text{
+        anchors.top: container.bottom
+        anchors.topMargin: 15
+        anchors.horizontalCenter: container.horizontalCenter
+        text: container.loadingText
+        color: "#606060"
+        font{
+            capitalization: Font.MixedCase
+            pixelSize: 15
+            weight: Font.Normal
+            family: "Poppins"
+        }
+    }
 
     //: A dot which move within the container.
     Rectangle{
