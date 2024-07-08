@@ -11,6 +11,11 @@ ReceivingServer::ReceivingServer(QSharedPointer<DeviceInterface> localHostIntefa
 
 ReceivingServer::~ReceivingServer(){
     qDebug() << "ReceivingServer: Destructor called.";
+    stopServer();
+}
+
+void ReceivingServer::stopServer(){
+    qDebug() << "ReceivingServer: Stopping the TCP server started at " <<  m_server.serverAddress() << ":" << m_server.serverPort();
     m_server.close();
 }
 
@@ -23,7 +28,7 @@ void ReceivingServer::initServer(){
         qDebug() << "ReceivingServer: TCP Server is already listening for incoming connection on " << m_server.serverAddress() << m_server.serverPort(); 
         return;
     }
-    else if(!m_server.listen(m_localHostInteface.data()->getIpAddress(), 5000)){
+    else if(!m_server.listen(m_localHostInteface.data()->getIpAddress(), Network::PORT)){
         qDebug() << "ReceivingServer: Unable to start TCP Server on" << m_localHostInteface.data()->getIpAddress() << QString::number(Network::PORT);
         return;
     }

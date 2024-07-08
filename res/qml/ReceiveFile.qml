@@ -8,6 +8,11 @@ Popup{
     id: page
     focus: true
 
+    // Start the receiving server
+    onOpened: receivingServer.initServer()
+
+    onClosed: receivingServer.stopServer()
+
     // Slide-in enter animation
     enter: Transition {
         NumberAnimation { 
@@ -107,7 +112,6 @@ Popup{
     // The inner circles.
     property Component innerCircles: Repeater{
         model: 3
-        // z: 1
 
         Rectangle{
             id: radarBorder
@@ -122,14 +126,6 @@ Popup{
 
             // Gives the inner most circle, the dark shade of grey
             color: Qt.rgba(0.827, 0.827, 0.827, (1 - (1 * (index * 0.3))))
-
-            // border{
-            //     property int borderWidth: 2
-            //     // On every iteratation, the width gets small by 20%
-            //     width: (borderWidth - (borderWidth * (index * 0.2)))
-            //     color: Qt.rgba(0.827, 0.827, 0.827, (1 - (1 * (index * 0.2))))
-            //     onWidthChanged: console.log(border.width, " ", radarBorder.size)
-            // }
         }
     }
 
@@ -144,8 +140,7 @@ Popup{
 
         ColumnLayout{
             anchors.verticalCenter: parent.verticalCenter
-            x: 15
-            Component.onCompleted: console.log(x, parent.x)
+            x: 15   // Margin
             width: parent.width
             
             spacing: 5
@@ -175,7 +170,7 @@ Popup{
                 }
             }
 
-            //: Send button
+            //: Stop server button
             Button{
                 id: sendBtn
                 text: "Stop Server"

@@ -84,7 +84,7 @@ QList<QHostAddress> DeviceDiscovery::parseNmapResp(QString resp){
         if(line.contains("Nmap scan report")){
             QString portLine = dataList.at(idx + 4);
             
-            if(portLine.contains(QString::number(Network::PORT)) ){ //&& portLine.contains("open")
+            if(portLine.contains(QString::number(Network::PORT)) && portLine.contains("open")){
                 // Regex to fetch the IP address.
                 QRegularExpression rx("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
                 QRegularExpressionMatch ipMatch = rx.match(line);

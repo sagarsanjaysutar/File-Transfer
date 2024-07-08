@@ -34,9 +34,14 @@ The project compilation will be done in a [docker container](https://hub.docker.
 1. From inside the docker container, build and run the app.
    
    ```shell
-   > /bin/sh /File-Transfer/build-and-run.sh
+   > /bin/sh /File-Transfer/.vscode/execute.sh
    ```
+
+## Exclusion
+
+1. This project uses SFTP for file transfer & not a custom transfer mechanism using sockets as it would be re-inventing the wheel.
 
 ## Todo
 
 1. Figure out a way to generate the final binary bundled with all required static libraries.
+

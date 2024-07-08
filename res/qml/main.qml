@@ -66,6 +66,7 @@ ApplicationWindow{
     RowLayout{
         anchors.fill: parent
 
+        // Left panel containing send/receive buttons
         ColumnLayout {
             Layout.preferredWidth: parent.width/2
             Layout.alignment: Qt.AlignRight
@@ -170,9 +171,9 @@ ApplicationWindow{
             }
         }
 
+        //: Right panel containing UI Circles.
         Rectangle{
             id: rightPanel
-            // anchors.right: parent.right
             Layout.preferredWidth: parent.width/2
             Layout.preferredHeight: parent.height
             color: "transparent"

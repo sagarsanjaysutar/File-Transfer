@@ -17,6 +17,9 @@ public:
     //!< \brief Starts a TCP server on the localhost network to listen for incoming connections.
     Q_INVOKABLE void initServer();
 
+    //!< \brief Stops the TCP server started on the localhost network.
+    Q_INVOKABLE void stopServer();
+
 private:
     QTcpServer m_server;
     QTcpSocket* m_clientConnection;

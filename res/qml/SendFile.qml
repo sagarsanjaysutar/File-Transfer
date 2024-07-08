@@ -8,7 +8,7 @@ Popup{
     id: page
     focus: true
 
-    // Slide-in enter animation
+    // Slide-in enter animation for the entire page.
     enter: Transition {
         NumberAnimation { 
             properties: "x";
@@ -19,7 +19,7 @@ Popup{
         }
     }
 
-    // Slide-out exit animation
+    // Slide-out exit animation for the entire page.
     exit: Transition {
         NumberAnimation { 
             properties: "x";
@@ -37,10 +37,9 @@ Popup{
     //: Open the File Explorer
     onOpened: fileDialog.open() 
 
-
     contentItem: Item{
         
-        //: File Explorer Window
+        //: #00. File Explorer Window will open first.
         FileDialog {
             id: fileDialog
             title: "Please choose a file"
@@ -52,10 +51,11 @@ Popup{
                 loadingBox.active = true
                 discovery.startDeviceDiscovery();
             }
-            onRejected: page.close();
+            onRejected: page.close()
+            visible: false
         }
 
-        //: Loading component
+        //: #01. Loading component will show while searching for devices.
         Loader{
             id: loadingBox
             anchors.centerIn: parent
@@ -67,24 +67,15 @@ Popup{
             active: false
         }
 
-        //: List of devices on the network
+        //: #02. List of discovered devices on the network will be shown
         ListView{
-            id: hostList
-
-            add: Transition{
-                NumberAnimation { 
-                    properties: "y";
-                    from: y + width;
-                    easing.type: Easing.InOutQuad;
-                    duration: 400;
-                }
-            }
+            id: hostList           
 
             //: Devices founds on the localhost network.
             property var devicesOnNetwork: discovery.devicesOnNetwork
             onDevicesOnNetworkChanged: {
                 loadingBox.active = false
-
+               
                 //: Add devices to the listview model.
                 for(var device in devicesOnNetwork){
                     interfaceList.add({"ipAddr": devicesOnNetwork[device].getIpAddressStr()});
@@ -96,18 +87,28 @@ Popup{
             height: parent.height * 0.80
             spacing: 4
             clip: true
-            visible: hostList.devicesOnNetwork.length > 0
+            visible: interfaceList.count > 0
+
+            //: Transition for the list items to arise from bottom.
+            add: Transition{
+                NumberAnimation { 
+                    properties: "y";
+                    from: y + width;
+                    easing.type: Easing.InOutQuad;
+                    duration: 400;
+                }
+            }
 
             //: Title
             header: Column{
                 id: hostListHeader
                 width: parent.width
                 height: hostList.height * 0.20
-                visible: hostList.devicesOnNetwork.length > 0
+                visible: interfaceList.count > 0
                 spacing: 5
 
                 Text{
-                    text: "Found " + hostList.devicesOnNetwork.length + " devices"
+                    text: "Found " + interfaceList.count + " devices"
                     color: "#606060"
                     font{
                         capitalization: Font.MixedCase
