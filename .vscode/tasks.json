@@ -1,18 +1,12 @@
 {
   "tasks": [
     {
-      /*
-        Command to build and run the File-Transfer repo inside a Qt6 docker container.
-        Refer https://www.baeldung.com/linux/docker-container-gui-applications 
-        Refer https://stackoverflow.com/a/51314059 
-        Refer https://stackoverflow.com/a/77747682 
-      */
-      "label": "Run Docker GUI Container",
+      "label": "Run Docker Container",
       "type": "shell",
       "command": "sh",
       "args": [
         "-c",
-        "docker build -t file_transfer:v1.0 ${workspaceFolder} && docker run --volume ${workspaceFolder}:/File-Transfer --volume /tmp/.X11-unix:/tmp/.X11-unix --device=/dev/dri:/dev/dri --env DISPLAY --net host -it file_transfer:v1.0  /File-Transfer/.vscode/execute.sh"
+        "./execute.sh"
       ],
       "group": {
         "kind": "build",
