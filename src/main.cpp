@@ -1,5 +1,6 @@
 #include "NetworkManager.h"
 #include "ReceivingServer.h"
+#include "SFTPAccess.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -15,8 +16,10 @@ int main(int argc, char *argv[]){
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
+    SFTPAccess obj;
+    return 0;
     NetworkManager discovery;
-    ReceivingServer receivingServer(discovery.getLocalHostInterfaces().at(0));
+    ReceivingServer receivingServer(discovery.getLocalHostInterface());
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();
