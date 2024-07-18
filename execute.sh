@@ -1,18 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
-#############################################################################
-##### A helper script to run the application inside a docker container. #####
-#############################################################################
+#########################################################################
+#   A helper script to run the application inside a docker container.   #
+#   Usage:                                                              #
+#       ./execute                                                       #
+#########################################################################
 
 echo "Launching the File Transfer App in a docker container..."
 
 ########## Install dependencies. ##########
 DEP_COUNT=$(dpkg -l | grep -Ec 'net-tools|ipcalc|docker-ce ')
 if [ $DEP_COUNT -ne 3 ]; then
-    echo "Need to install dependencies. Please allow root access."
+    echo "Need to install dependencies on the host. Please allow root access."
     sudo apt-get install -y net-tools ipcalc docker
 else 
-    echo "Dependencies installed."
+    echo "Host Dependencies installed."
 fi
 
 ########## Create a docker network  ##########
@@ -23,18 +25,19 @@ CIDR=$(ipcalc $IP | grep Network | awk '{print $2}')
 
 # 02. Check if a docker network exists with the given CIDR.
 NETWORK_LIST=$(docker network ls | grep bridge | awk '{print $2}')
-CIDR_ADDED=false
+NETWORK_ADDED=false
 for i in $NETWORK_LIST; do
     if [ $(docker network inspect $i | grep Subnet | awk '{gsub(/"/, "", $2); print $2}') = $CIDR ]; then
-        echo "A docker network already exists."
-        CIDR_ADDED=true
+        echo "A docker network with $CIDR CIDR already exists."
+        NETWORK_ADDED=true
         break
     fi
 done
 
-if [ $CIDR_ADDED = false ]; then
-    echo "Creating a new docker network..."
-    docker network create --subnet=$CIDR file_transfer_network
+if [ $NETWORK_ADDED = false ]; then
+    echo "Creating a new docker network with $CIDR CIDR..."
+    # Todo: Figure out a way to generate a random unused IP for this network's gatewaty.
+    docker network create --subnet=$CIDR --gateway=192.168.0.150 file_transfer_network
 fi
 
 ########## Build the docker container ########## 
