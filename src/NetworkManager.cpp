@@ -14,6 +14,14 @@ NetworkManager::~NetworkManager(){
     qDebug() << "NetworkManager: Destructor called.";
 }
 
+QString NetworkManager::getLocalHostIPAddress(){
+    return getLocalHostInterface().data()->getIpAddress().toString();
+}
+
+QSharedPointer<DeviceInterface> NetworkManager::getLocalHostInterface(){
+    return getLocalHostInterfaces().at(0);
+}
+
 void NetworkManager::startDeviceDiscovery(){
     
     if(m_discoveryThread != nullptr && m_discoveryThread->isRunning()){
@@ -24,7 +32,7 @@ void NetworkManager::startDeviceDiscovery(){
     qDebug() << "NetworkManager: Starting the device discovery process...";
 
     m_discoveryThread = new QThread();
-    m_deviceDiscoveryWorker = new DeviceDiscovery(getLocalHostInterfaces().at(0));
+    m_deviceDiscoveryWorker = new DeviceDiscovery(getLocalHostInterface());
     m_deviceDiscoveryWorker->moveToThread(m_discoveryThread);
 
     // Start the device discovery process when the thread starts.
@@ -67,7 +75,6 @@ QList<QSharedPointer<DeviceInterface>> NetworkManager::getLocalHostInterfaces(){
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback())
             {
-                qDebug() << "NetworkManager: Found" << interface.humanReadableName();
                 localHostInterfaces.append(
                     QSharedPointer<DeviceInterface>(new DeviceInterface(
                         entry.ip(),

@@ -160,7 +160,7 @@ Popup{
 
             Text{
                 id: subtext
-                text: "Started receiving server at 192.168.0.0"
+                text: "Started receiving server at " + discovery.localHostIPAddress
                 color: "#606060"
                 font{
                     capitalization: Font.MixedCase

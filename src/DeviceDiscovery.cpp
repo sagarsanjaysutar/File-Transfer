@@ -30,13 +30,24 @@ void DeviceDiscovery::slot_startDeviceDiscovery(){
     QObject::connect(nmapProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ qDebug() << "DeviceDiscovery: Error Occured " << error; });
     QObject::connect(nmapProcess, &QProcess::stateChanged, [=](QProcess::ProcessState state){ qDebug() << "DeviceDiscovery: State Changed " << state; });
     
+    
     // nmap command.
+    QString cmd;
+    QTextStream(&cmd) << "nmap" 
+            << " " << "-p"
+            << " " << QString::number(Network::PORT)
+            << " " << "--exclude"
+            << " " << m_interface.data()->getGatewayAddress().toString()
+            << " " << m_interface.data()->getCIDRAddress();
+
+    qDebug() << "Starting nmap process: " << cmd;
+
     nmapProcess->setProgram("nmap");
     nmapProcess->setArguments(QStringList() 
             << "-p" << QString::number(Network::PORT)
-            << m_interface.data()->getCIDRAddress()
             << "--exclude"
             << m_interface.data()->getGatewayAddress().toString()
+            << m_interface.data()->getCIDRAddress()
             );
     nmapProcess->start();
 
@@ -80,7 +91,7 @@ QList<QHostAddress> DeviceDiscovery::parseNmapResp(QString resp){
     int idx = 0;
     while(idx < dataList.count()){
         QString line = dataList.at(idx);
-        // qDebug() << line;
+        qDebug() << line;
         if(line.contains("Nmap scan report")){
             QString portLine = dataList.at(idx + 4);
             

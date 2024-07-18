@@ -21,7 +21,7 @@ DeviceInterface::DeviceInterface(QHostAddress ip, QHostAddress mask, QString nam
     m_name(name),
     m_type(type)
 {
-    setGatewayAddress(m_ipAddress);
+    setGatewayAddress(m_ipAddress, m_maskAddress);
     setCIDRAddress(m_ipAddress, m_maskAddress);
 }
 
@@ -35,35 +35,32 @@ DeviceInterface::DeviceInterface(const DeviceInterface &interface, QObject* pare
     m_type(interface.getType())
 {}
 
-void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress){
+void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress, const QHostAddress subnetMask){
 
     if(ipAddress.isNull()){
         qDebug() << "DeviceInterface: Can't set Gateway address, Invalid IP.";
         return;
     }
     else{
-        // Build the Gateway address from IP address:
-        // e.g. 192.168.0.192 -> 192.168.0.1
-        QStringList ipAddrList = ipAddress.toString().split(".");
-
-        // Replace the host number of the IP address with 1.
-        ipAddrList[ipAddrList.count() - 1] = "1";
-
-        m_gatewayAddress = QHostAddress(ipAddrList.join("."));
+        // Perform a bitwise AND b/w IP address & mask address to get the network address.
+        // Gateway address is network address + 1.
+        m_gatewayAddress = QHostAddress((ipAddress.toIPv4Address() & subnetMask.toIPv4Address()) + 1);
+        qDebug() << "DeviceInterface: Gateway address set to " << m_gatewayAddress;
     }
 }
 
-void DeviceInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subnetMask){
+void DeviceInterface::setCIDRAddress(const QHostAddress ipAddress, const QHostAddress subnetMask){
 
     if(ipAddress.isNull() || subnetMask.isNull()){
         qDebug() << "DeviceInterface: Can't set CIDR address, Invalid IP & Mask.";
         return;
     }
-    
-    // Convert the IP Address into integer.
+
+    // Convert the subnet address into integer.
     quint32 subnetAddrInt = subnetMask.toIPv4Address();
     
-    // Initialize the CIDR notation
+    // This is the correct way to determine the CIDR prefer-length
+    // Initialize the CIDR prefix-length
     int cidr = 0;
     
     // Count the number of "1" in the subnet mask
@@ -81,19 +78,6 @@ void DeviceInterface::setCIDRAddress(QHostAddress ipAddress, QHostAddress subnet
 
     // Append the CIDR number to the IP.
     m_CIDRAddress = ipAddrList.join(".").append("/").append(QString::number(cidr));
-}
 
-void DeviceInterface::setIpAddress(const QHostAddress ipAddress) {
-    if(m_ipAddress != ipAddress)
-        m_ipAddress = ipAddress;
-}
-
-void DeviceInterface::setMaskAddress(const QHostAddress maskAddress) {
-    if(m_maskAddress != maskAddress)
-        m_maskAddress = maskAddress;
-}
-
-void DeviceInterface::setName(const QString name) {
-    if(m_name != name)
-        m_name = name;
+    qDebug() << "DeviceInterface: CIDR address set to " << m_CIDRAddress;
 }
