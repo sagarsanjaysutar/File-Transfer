@@ -9,7 +9,7 @@
 #include <QFile>
 #include <QMap>
 #include <QJsonObject>
-
+#include <QStringList>
 int main(int argc, char *argv[]){
 
     // Standard Qt/QML Configuration
@@ -17,7 +17,6 @@ int main(int argc, char *argv[]){
     QQmlApplicationEngine engine;
 
     SFTPAccess obj;
-    return 0;
     NetworkManager discovery;
     ReceivingServer receivingServer(discovery.getLocalHostInterface());
 

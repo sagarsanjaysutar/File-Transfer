@@ -90,33 +90,5 @@ void SFTPAccess::enableSFTP(){
 
         // Cleanup
         delete enableSFTPProcess;
-
-        // 02. Configure SSH for temporary SFTP use.
-        addSFTPConfig();
     }
-}
-
-void SFTPAccess::addSFTPConfig(){
-    qDebug() << "SFTPAccess: Configure SSH for temporary SFTP use...";
-
-    QProcess *configSFTPProcess = new QProcess();
-    QObject::connect(configSFTPProcess, &QProcess::finished, [&](int exitCode, QProcess::ExitStatus exitStatus){ qDebug() << "SFTPAccess: SFTP enable process finished. " << exitCode;});
-    QObject::connect(configSFTPProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ qDebug() << "SFTPAccess: SFTP enable process error occurred. " << error; });
-    
-    enableSFTPProcess->setProgram("sudo");
-    enableSFTPProcess->setArguments(QStringList() << "service" << "ssh" << "start");
-    enableSFTPProcess->start();
-
-    if (!enableSFTPProcess->waitForStarted())
-        // Wait for the process to start
-        qDebug() << "SFTPAccess: Failed to start the SFTP enable process.";
-    else if (!enableSFTPProcess->waitForFinished())
-        // Wait until the process is completed.
-        qDebug() << "SFTPAccess: SFTP enable process timedout.";
-    else
-        qDebug() << "SFTP enable exit code: " << enableSFTPExitCode;
-
-    // Cleanup
-    delete enableSFTPProcess;
-
 }

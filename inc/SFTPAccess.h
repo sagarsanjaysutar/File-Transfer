@@ -17,8 +17,6 @@ private:
     bool parseSFTPAvailableCheckResp(QString);
 
     bool sftpAvailableCheck();
-
-    void addSFTPConfig();
 };
 
 #endif
