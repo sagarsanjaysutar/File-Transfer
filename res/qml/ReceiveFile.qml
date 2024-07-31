@@ -9,9 +9,9 @@ Popup{
     focus: true
 
     // Start the receiving server
-    onOpened: receivingServer.initServer()
+    onOpened: sftp.enableSFTP()
 
-    onClosed: receivingServer.stopServer()
+    onClosed: sftp.disableSFTP()
 
     // Slide-in enter animation
     enter: Transition {

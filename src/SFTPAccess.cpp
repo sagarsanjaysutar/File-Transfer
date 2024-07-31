@@ -1,94 +1,93 @@
 #include "SFTPAccess.h"
 #include <QDebug>
+#include <QProcessEnvironment>
+
+// Use the preprocessor macro
+#define Q(x) #x
+#define QUOTE(x) Q(x)
+#ifdef PROJECT_SOURCE_DIR
+static const QString projectDir(QUOTE(PROJECT_SOURCE_DIR));
+#else
+static const QString projectDir("");
+#endif
 
 SFTPAccess::SFTPAccess() {
     qDebug() << "SFTPAccess: Constructor called.";
-    enableSFTP();
+    qDebug() << "Project Directory:" << projectDir;
 }
 
 SFTPAccess::~SFTPAccess(){
     qDebug() << "SFTPAccess: Destructor called.";
 }
+void SFTPAccess::disableSFTP(){
+    qDebug() << "SFTPAccess: Disabling SFTP access...";
 
-bool SFTPAccess::sftpAvailableCheck(){
+    // Stop the SFTP server.
+    int disableSFTPExitCode = 1; // Generic error code.
 
-    qDebug() << "SFTPAccess: Checking if SFTP is running...";
-
-    // Interpret SFTP check response.
-    QString sftpAvailableCheckResp;
-    QProcess *sftpAvailableCheckProcess = new QProcess();
-    QObject::connect(sftpAvailableCheckProcess, &QProcess::finished, [=](int exitCode, QProcess::ExitStatus exitStatus){ qDebug() << "SFTPAccess: SFTP check finished." << exitCode << exitStatus;});
-    QObject::connect(sftpAvailableCheckProcess, &QProcess::readyReadStandardOutput, [&](){ sftpAvailableCheckResp.append(sftpAvailableCheckProcess->readAllStandardOutput()); });
-    QObject::connect(sftpAvailableCheckProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ qDebug() << "SFTPAccess: SFTP check Error Occurred. " << error; });
+    QProcess *disableSFTPProcess = new QProcess();
+    QObject::connect(disableSFTPProcess, &QProcess::finished, [&](int exitCode, QProcess::ExitStatus exitStatus){ 
+        disableSFTPExitCode = exitCode;
+    });
+    QObject::connect(disableSFTPProcess, &QProcess::readyReadStandardOutput, [&](){ 
+        qDebug() << "SFTPAccess: Disable SFTP output: " << disableSFTPProcess->readAllStandardOutput(); 
+    });
+    QObject::connect(disableSFTPProcess, &QProcess::readyReadStandardError, [&]() {
+        qDebug() << "SFTPAccess: Disable SFTP error output:" << disableSFTPProcess->readAllStandardError();;
+    });
+    QObject::connect(disableSFTPProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ 
+        qDebug() << "SFTPAccess: SFTP disable process error occurred. " << error; 
+    });
     
-    sftpAvailableCheckProcess->setProgram("service");
-    sftpAvailableCheckProcess->setArguments(QStringList() << "ssh" << "status");
-    sftpAvailableCheckProcess->start();
+    disableSFTPProcess->setProgram(projectDir + "/scripts/enableSFTP.sh");
+    disableSFTPProcess->setArguments(QStringList() << "stop" );
+    disableSFTPProcess->start();
 
-    // Wait for the process to start
-    if (!sftpAvailableCheckProcess->waitForStarted())
-        qDebug() << "SFTPAccess: Failed to start the SFTP check process.";
-
-    // Wait until the process is completed.
-    if (!sftpAvailableCheckProcess->waitForFinished())
-        qDebug() << "SFTPAccess: SFTP check process timedout.";
+    if (!disableSFTPProcess->waitForStarted())
+        // Wait for the process to start
+        qDebug() << "SFTPAccess: Failed to start the SFTP disable process.";
+    else if (!disableSFTPProcess->waitForFinished())
+        // Wait until the process is completed.
+        qDebug() << "SFTPAccess: SFTP disable process timedout.";
+    else
+        qDebug() << "SFTPAccess: SFTP disable exit code: " << disableSFTPExitCode;
 
     // Cleanup
-    delete sftpAvailableCheckProcess;
-
-    return parseSFTPAvailableCheckResp(sftpAvailableCheckResp);
-}
-
-bool SFTPAccess::parseSFTPAvailableCheckResp(QString sftpResp){
-
-    if(sftpResp.isEmpty()){
-        qDebug() << "SFTPAccess: SFTP available check response is empty.";
-        return false;
-    }
-
-    qDebug() << "SFTPAccess: SFTP available check response\t" << sftpResp;
-    QStringList respList = sftpResp.split("\n");
-    
-    if(respList.at(0).contains("not running")){
-        qDebug() << "SFTPAccess: SFTP is not running..";
-        return false;
-    }
-    else if(respList.count() > 3 && respList.at(2).contains("is running")){
-        qDebug() << "SFTPAccess: SFTP is running";
-        return true;
-    }
-    else{
-        qDebug() << "SFTPAccess: Invalid SFTP available check response";
-        return false;
-    }
+    delete disableSFTPProcess;
 }
 
 void SFTPAccess::enableSFTP(){
     qDebug() << "SFTPAccess: Enabling SFTP access...";
 
-    if(!sftpAvailableCheck()){
-        
-        // 01. Temporarily start the SFTP server using "service ssh start"
-        int enableSFTPExitCode = 1; // Generic error code.
+    // Temporarily start the SFTP server.
+    int enableSFTPExitCode = 1; // Generic error code.
 
-        QProcess *enableSFTPProcess = new QProcess();
-        QObject::connect(enableSFTPProcess, &QProcess::finished, [&](int exitCode, QProcess::ExitStatus exitStatus){ qDebug() << "SFTPAccess: SFTP enable process finished. " << exitCode; enableSFTPExitCode = exitCode;});
-        QObject::connect(enableSFTPProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ qDebug() << "SFTPAccess: SFTP enable process error occurred. " << error; });
-        
-        enableSFTPProcess->setProgram("sudo");
-        enableSFTPProcess->setArguments(QStringList() << "service" << "ssh" << "start");
-        enableSFTPProcess->start();
+    QProcess *enableSFTPProcess = new QProcess();
+    QObject::connect(enableSFTPProcess, &QProcess::finished, [&](int exitCode, QProcess::ExitStatus exitStatus){
+         enableSFTPExitCode = exitCode; 
+    });
+    QObject::connect(enableSFTPProcess, &QProcess::readyReadStandardOutput, [&](){ 
+        qDebug() << "SFTPAccess: Enable SFTP output: " << enableSFTPProcess->readAllStandardOutput(); 
+    });
+    QObject::connect(enableSFTPProcess, &QProcess::readyReadStandardError, [&]() {
+        qDebug() << "SFTPAccess: Enable SFTP error output:" << enableSFTPProcess->readAllStandardError();;
+    });
+    QObject::connect(enableSFTPProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error){ 
+        qDebug() << "SFTPAccess: SFTP enable process error occurred. " << error; 
+    });
+    
+    enableSFTPProcess->setProgram(projectDir + "/scripts/enableSFTP.sh");
+    enableSFTPProcess->start();
 
-        if (!enableSFTPProcess->waitForStarted())
-            // Wait for the process to start
-            qDebug() << "SFTPAccess: Failed to start the SFTP enable process.";
-        else if (!enableSFTPProcess->waitForFinished())
-            // Wait until the process is completed.
-            qDebug() << "SFTPAccess: SFTP enable process timedout.";
-        else
-            qDebug() << "SFTP enable exit code: " << enableSFTPExitCode;
+    if (!enableSFTPProcess->waitForStarted())
+        // Wait for the process to start
+        qDebug() << "SFTPAccess: Failed to start the SFTP enable process.";
+    else if (!enableSFTPProcess->waitForFinished())
+        // Wait until the process is completed.
+        qDebug() << "SFTPAccess: SFTP enable process timedout.";
+    else
+        qDebug() << "SFTPAccess: SFTP enable exit code: " << enableSFTPExitCode;
 
-        // Cleanup
-        delete enableSFTPProcess;
-    }
+    // Cleanup
+    delete enableSFTPProcess;
 }

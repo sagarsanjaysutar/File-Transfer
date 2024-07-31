@@ -4,8 +4,7 @@
 #include <QtGlobal>
 
 namespace Network{
-
-    static const quint16 PORT = 5000;
+    static const quint16 PORT = 22;
 }
 
 #endif

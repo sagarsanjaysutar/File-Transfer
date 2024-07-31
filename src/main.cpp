@@ -16,15 +16,18 @@ int main(int argc, char *argv[]){
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    SFTPAccess obj;
+    
+
     NetworkManager discovery;
-    ReceivingServer receivingServer(discovery.getLocalHostInterface());
+    SFTPAccess sftp;
+    // ReceivingServer receivingServer(discovery.getLocalHostInterface());
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();
     QVector<QQmlContext::PropertyPair> qmlProperties;
     qmlProperties.push_back(QQmlContext::PropertyPair{"discovery", QVariant::fromValue(&discovery)});
-    qmlProperties.push_back(QQmlContext::PropertyPair{"receivingServer", QVariant::fromValue(&receivingServer)});
+    qmlProperties.push_back(QQmlContext::PropertyPair{"sftp", QVariant::fromValue(&sftp)});
+    // qmlProperties.push_back(QQmlContext::PropertyPair{"receivingServer", QVariant::fromValue(&receivingServer)});
     ctxt->setContextProperties(qmlProperties);
 
     engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));
