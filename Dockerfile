@@ -6,7 +6,7 @@ FROM stateoftheartio/qt6:6.5-gcc-aqt
 RUN sudo apt-get update --fix-missing && sudo apt-get -y upgrade
 
 # Developement dependencies.
-RUN sudo apt-get -y install libgl1-mesa-dev libegl1-mesa-dev libxcb-xkb-dev libvulkan-dev x11-apps net-tools
+RUN sudo apt-get -y install libgl1-mesa-dev libegl1-mesa-dev libxcb-xkb-dev libxcb-cursor0 libvulkan-dev x11-apps net-tools
 
 # Application dependencies.
 RUN sudo apt-get -y install openssh-server openssh-client nmap

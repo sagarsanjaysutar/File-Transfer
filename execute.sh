@@ -8,16 +8,23 @@
 
 echo "Launching the File Transfer App in a docker container..."
 
-########## Install dependencies. ##########
+########## Install host dependencies. ##########
 DEP_COUNT=$(dpkg -l | grep -Ec 'net-tools|ipcalc|docker-ce ')
 if [ $DEP_COUNT -ne 3 ]; then
-    echo "Need to install dependencies on the host. Please allow root access."
-    sudo apt-get install -y net-tools ipcalc docker
+    if [ $EUID -ne 0 ]; then
+        echo "Need to install dependencies on the host machine. Please re-run the script with sudo."
+        exit 1
+    else 
+        echo "Installing host dependencies..."
+        sudo apt-get install -y net-tools ipcalc docker
+    fi
+    
 else 
     echo "Host Dependencies installed."
 fi
 
 ########## Create a docker network  ##########
+
 # 01. Iterate through network interfaces & get IP of the first network interface.
 echo "Checking if docker network exists for File Transfer application."
 IP=$(ifconfig $(ifconfig | grep "UP,BROADCAST,RUNNING,MULTICAST" | awk 'NR==1 {sub(/:$/, "", $1); print $1}') | grep "inet " | awk '{print $2}')
@@ -36,7 +43,8 @@ done
 
 if [ $NETWORK_ADDED = false ]; then
     echo "Creating a new docker network with $CIDR CIDR..."
-    # Todo: Figure out a way to generate a random unused IP for this network's gatewaty.
+    # Todo: Figure out a way to generate a random unused IP for docker network's gateway.
+    # The default gateway assigned by docker messes up the host's internet.
     docker network create --subnet=$CIDR --gateway=192.168.0.150 file_transfer_network
 fi
 
