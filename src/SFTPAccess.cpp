@@ -39,8 +39,8 @@ void SFTPAccess::disableSFTP(){
         qDebug() << "SFTPAccess: SFTP disable process error occurred. " << error; 
     });
     
-    disableSFTPProcess->setProgram(projectDir + "/scripts/enableSFTP.sh");
-    disableSFTPProcess->setArguments(QStringList() << "stop" );
+    disableSFTPProcess->setProgram("sudo");
+    disableSFTPProcess->setArguments(QStringList() << projectDir + "/scripts/enableSFTP.sh" << "stop" );
     disableSFTPProcess->start();
 
     if (!disableSFTPProcess->waitForStarted())
@@ -76,7 +76,8 @@ void SFTPAccess::enableSFTP(){
         qDebug() << "SFTPAccess: SFTP enable process error occurred. " << error; 
     });
     
-    enableSFTPProcess->setProgram(projectDir + "/scripts/enableSFTP.sh");
+    enableSFTPProcess->setProgram("sudo");
+    enableSFTPProcess->setArguments(QStringList() << projectDir + "/scripts/enableSFTP.sh");
     enableSFTPProcess->start();
 
     if (!enableSFTPProcess->waitForStarted())

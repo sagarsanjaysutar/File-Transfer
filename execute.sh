@@ -49,6 +49,7 @@ if [ $NETWORK_ADDED = false ]; then
 fi
 
 ########## Build the docker container ########## 
+
 echo "Building the docker container..."
 docker build -t file_transfer:v1.0 $PWD
 
