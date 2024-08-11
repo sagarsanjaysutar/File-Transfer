@@ -20,28 +20,9 @@ _The purpose of this project is to learn various advanced concepts in C++._
 
 ## Running the project
 
-The project compilation will be done in a [docker container](https://hub.docker.com/layers/stateoftheartio/qt6/6.5-gcc-aqt/images/sha256-c0dfd1cd174d855f0157ce0455270b2ee49f5eea4c7a40ffe0e848d41ae4d074?context=explore) which has pre-installed development dependencies.
-
-1. The following commands will Download and run the docker container. This repo will be mounted to the container. Standard configuration for X11-forwarding is also added to run GUI apps inside the container.
-
-   ```shell
-   > cd File-Transfer
-   > docker build -t file_transfer:v1.0 ${PWD}
-   > docker images
-   > docker run --volume ${PWD}:/File-Transfer --volume /tmp/.X11-unix:/tmp/.X11-unix --device=/dev/dri:/dev/dri --env DISPLAY --net host -it file_transfer:v1.0
-   ```
-
-1. From inside the docker container, build and run the app.
-   
-   ```shell
-   > /bin/sh /File-Transfer/.vscode/execute.sh
-   ```
-
-## Exclusion
-
-1. This project uses SFTP for file transfer & not a custom transfer mechanism using sockets as it would be re-inventing the wheel.
+Run the execute.sh script to launch the application.
 
 ## Todo
 
-1. Figure out a way to generate the final binary bundled with all required static libraries.
+Explore the libssh library instead of the external linux's openssh-server.
 
