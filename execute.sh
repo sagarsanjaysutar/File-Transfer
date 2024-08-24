@@ -50,7 +50,7 @@ fi
 
 ########## Build the docker container ########## 
 echo "Building the docker container..."
-DOCKER_BUILDKIT=0 docker build -t file_transfer:v1.0 $PWD
+docker build -t file_transfer:v2.0 $PWD
 
 ########## Run the docker container ########## 
 
@@ -70,10 +70,11 @@ docker run                                  \
     --cap-add SYS_ADMIN                     \
     --security-opt apparmor:unconfined      \
     --env DISPLAY                           \
-    -it file_transfer:v1.0                  \
-    # sh -c "cd /File-Transfer &&             \
-    #     mkdir -p /File-Transfer/build &&                   \
-    #     cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
-    #     cmake --build /File-Transfer/build &&              \
+    -it file_transfer:v2.0                  \
+    sh -c "cd /File-Transfer &&             \
+        mkdir -p /File-Transfer/build &&                   \
+        cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
+        cmake --build /File-Transfer/build &&              \
+        /File-Transfer/build/file_transfer"
     #     cmake --install /File-Transfer/build --prefix /File-Transfer/build/AppDir &&\
     #     /File-Transfer/utils/AppImage/linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt"
