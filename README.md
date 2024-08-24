@@ -4,25 +4,35 @@ Securely transfer files on a local network.
 
 https://github.com/sagarsanjaysutar/File-Transfer/assets/41800823/df94162a-fa58-475e-8184-6c649e7d392b
 
-_The purpose of this project is to learn various advanced concepts in C++._
-
 ## Concepts
+
+_The purpose of this project is to learn various advanced concepts in C++._
 
 1. **Object-Oriented**: SOLID principles are followed.
 2. **Device Discovery**: Device discovery via `nmap` is performed.
-3. **Network Programming**: Peer-to-peer file transfer mechanism via socket programming is implemented.
-4. **Multithreading**: Multithreading is utilized to handle multiple file transfers simultaneously.
-5. **Checksums**: Checksums calculation for files transmission is implemented to ensure data integrity.
-6. **Smart Pointers**: Smart pointers are used to manage dynamic memory allocation and prevent memory leaks.
-7. **Timers**: Timers are implemented for synchronous file transfers and for managing timeouts during network operations.
-8. **Docker**: A Docker container is used which has pre-installed dependencies.
-9. **CMake**: CMake is used as the build system for the project to ensure easy compilation on different platforms.
+3. **File Transfer**: SFTP Protocol is used to transfer file.
+4. **Smart Pointers**: Smart pointers are used to manage dynamic memory allocation and prevent memory leaks.
+5. **CMake**: CMake is used as the build system for the project to ensure easy compilation on different platforms.
+6. **Docker & AppImage**: A docker container with pre-installed dependencies is used to build & generate an AppImage for the application.
 
 ## Running the project
 
-Run the execute.sh script to launch the application.
+1. Builds & runs the project's binary inside a docker container. 
+    ```shell
+    ./execute 
+    ```
+2. Builds & generates the project's AppImage inside a docker container. The generated AppImage (bin/) can be executed on any Linux system by simply double clicking.
+    ```shell
+    ./execute build
+    ```
+
+### Limitations
+
+1. This project is a wrapper around Linux's SFTP tool (openssh-server & openssh-client). The `scripts/enableSFTP.sh` script meant to manage SFTP uses a lot Ubuntu-specific commands which has made the project dependent on Linux's Ubuntu distribution. 
+2. The `scripts/enableSFTP.sh` script managing the SFTP requires the application (generated AppImage) to be run with sudo.
 
 ## Todo
 
-Explore the libssh library instead of the external linux's openssh-server.
-
+1. Explore the libssh library instead of the external linux's openssh-server.
+2. Utilize multi-thread to handle multiple file transfers simultaneously.
+3. Perform Checksums calculation to ensure data integrity after files transmission.
