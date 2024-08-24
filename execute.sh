@@ -29,9 +29,9 @@ if [ "$1" = "build" ]; then
             mkdir -p /File-Transfer/build /File-Transfer/bin &&                   \
             cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
             cmake --build /File-Transfer/build &&              \
-            sudo make install --directory=/File-Transfer/build/ DESTDIR=AppDir &&    \
+            sudo make install --directory=/File-Transfer/build/ DESTDIR=/File-Transfer/build/AppDir &&    \
             cd /File-Transfer/bin/ && \
-            export QML_SOURCES_PATHS=/File-Transfer/res/qml QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib   && \
+            sudo QML_SOURCES_PATHS=/File-Transfer/res/qml QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib \
             /home/user/linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt"
 else
     echo "Running the docker container to build & run the project's binary."
