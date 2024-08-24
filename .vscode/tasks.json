@@ -1,16 +1,23 @@
 {
   "tasks": [
     {
-      "label": "Run Docker Container",
+      "label": "Run Application",
       "type": "shell",
       "command": "sh",
-      "args": [
-        "-c",
-        "./execute.sh"
-      ],
+      "args": ["-c", "./execute.sh"],
       "group": {
         "kind": "build",
-        "isDefault": true
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Build Application",
+      "type": "shell",
+      "command": "sh",
+      "args": ["-c", "./execute.sh build"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
       }
     }
   ],

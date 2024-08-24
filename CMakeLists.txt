@@ -31,7 +31,7 @@ target_link_libraries(file_transfer PRIVATE Qt6::Core Qt6::Network Qt6::Qml Qt6:
 
 # add execute permissions
 
-install(FILES ${PROJECT_SOURCE_DIR}/utils/AppImage/Root-Launch.sh DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${PROJECT_SOURCE_DIR}/utils/AppImage/File-Transfer.desktop DESTINATION share/applications)
-install(FILES ${PROJECT_SOURCE_DIR}/utils/AppImage/File-Transfer.png DESTINATION share/icons/hicolor/512x512/apps)
+install(FILES ${PROJECT_SOURCE_DIR}/ci/Root-Launch.sh DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(FILES ${PROJECT_SOURCE_DIR}/ci/File-Transfer.desktop DESTINATION share/applications)
+install(FILES ${PROJECT_SOURCE_DIR}/ci/File-Transfer.png DESTINATION share/icons/hicolor/512x512/apps)
 install(TARGETS file_transfer DESTINATION bin)
