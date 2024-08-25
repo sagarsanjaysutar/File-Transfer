@@ -3,7 +3,8 @@
 
 #include <QtGlobal>
 
-namespace Network{
+namespace Network
+{
     static const quint16 PORT = 22;
 }
 

@@ -3,19 +3,18 @@
 
 #include <QProcess>
 
-class SFTPAccess : public QObject{
+class SFTPAccess : public QObject
+{
 
-Q_OBJECT
+    Q_OBJECT
 
 public:
-
     SFTPAccess();
     ~SFTPAccess();
 
     Q_INVOKABLE void enableSFTP();
 
     Q_INVOKABLE void disableSFTP();
-
 };
 
 #endif

@@ -1,15 +1,15 @@
 #ifndef RECEIVINGSERVER_H
 #define RECEIVINGSERVER_H
 
-#include <QTcpServer>
-#include <QTcpSocket>
 #include <QObject>
 #include "DeviceInterface.h"
+#include <SFTPAccess.h>
 
-class ReceivingServer : public QObject{
+class ReceivingServer : public QObject
+{
     Q_OBJECT
 public:
-    ReceivingServer(QSharedPointer<DeviceInterface> localHostInteface, QObject* parent = nullptr);
+    ReceivingServer(QSharedPointer<SFTPAccess> sftp, QObject *parent = nullptr);
     ~ReceivingServer();
 
     Q_INVOKABLE void receiveFile();
@@ -21,10 +21,7 @@ public:
     Q_INVOKABLE void stopServer();
 
 private:
-    QTcpServer m_server;
-    QTcpSocket* m_clientConnection;
-    QSharedPointer<DeviceInterface> m_localHostInteface;
+    QSharedPointer<SFTPAccess> m_sftp;
 };
 
 #endif
-

@@ -9,7 +9,8 @@
 #include "DeviceInterface.h"
 
 //!< \brief Discovers the device connected on the given interface network(ethernet or Wifi).
-class DeviceDiscovery : public QObject {
+class DeviceDiscovery : public QObject
+{
     Q_OBJECT
 public:
     DeviceDiscovery(QSharedPointer<DeviceInterface> interface, QObject *parent = nullptr);
@@ -26,7 +27,7 @@ signals:
     //!< \brief Signal emitting the discovered devices on the localhost network.
     void sig_discoveredDevicesOnNetwork(QList<QSharedPointer<DeviceInterface>>);
 
-public slots:    
+public slots:
     //!< \brief Runs the nmap process for discovering devices on the localhost network.
     void slot_startDeviceDiscovery();
 };

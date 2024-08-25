@@ -1,51 +1,56 @@
 #include "ReceivingServer.h"
 #include "networknamespace.h"
 
-ReceivingServer::ReceivingServer(QSharedPointer<DeviceInterface> localHostInteface, QObject* parent) :
-    QObject(parent),
-    m_server(parent),
-    m_localHostInteface(localHostInteface)
+ReceivingServer::ReceivingServer(QSharedPointer<SFTPAccess> sftp, QObject *parent) : QObject(parent),
+                                                                                     m_sftp(sftp),
 {
     qDebug() << "ReceivingServer: Constructor called.";
 }
 
-ReceivingServer::~ReceivingServer(){
+ReceivingServer::~ReceivingServer()
+{
     qDebug() << "ReceivingServer: Destructor called.";
     stopServer();
 }
 
-void ReceivingServer::stopServer(){
-    qDebug() << "ReceivingServer: Stopping the TCP server started at " <<  m_server.serverAddress() << ":" << m_server.serverPort();
+void ReceivingServer::stopServer()
+{
+    qDebug() << "ReceivingServer: Stopping the TCP server started at " << m_server.serverAddress() << ":" << m_server.serverPort();
     m_server.close();
 }
 
-void ReceivingServer::initServer(){
-    if(m_localHostInteface == nullptr){
+void ReceivingServer::initServer()
+{
+    if (m_localHostInteface == nullptr)
+    {
         qDebug() << "ReceivingServer: Invalid localhost. Can't start TCP Server.";
         return;
     }
-    else if(m_server.isListening()){
-        qDebug() << "ReceivingServer: TCP Server is already listening for incoming connection on " << m_server.serverAddress() << m_server.serverPort(); 
+    else if (m_server.isListening())
+    {
+        qDebug() << "ReceivingServer: TCP Server is already listening for incoming connection on " << m_server.serverAddress() << m_server.serverPort();
         return;
     }
-    else if(!m_server.listen(m_localHostInteface.data()->getIpAddress(), Network::PORT)){
+    else if (!m_server.listen(m_localHostInteface.data()->getIpAddress(), Network::PORT))
+    {
         qDebug() << "ReceivingServer: Unable to start TCP Server on" << m_localHostInteface.data()->getIpAddress() << QString::number(Network::PORT);
         return;
     }
     else
         qDebug() << "ReceivingServer: Started TCP Server on" << m_server.serverAddress() << m_server.serverPort();
 
-    QObject::connect(&m_server, &QTcpServer::newConnection, [&](){
+    QObject::connect(&m_server, &QTcpServer::newConnection, [&]()
+                     {
         qDebug() << "ReceivingServer: New connection";
         m_clientConnection = m_server.nextPendingConnection();
-        QObject::connect(m_clientConnection, &QIODevice::readyRead, [&](){ receiveFile(); });    
-    });
+        QObject::connect(m_clientConnection, &QIODevice::readyRead, [&](){ receiveFile(); }); });
 
     // qDebug() << "ReceivingServer: Waiting for new connection...";
     // m_server.waitForNewConnection(30000);
 }
 
-void ReceivingServer::receiveFile(){
+void ReceivingServer::receiveFile()
+{
     // initServer();
     // in.startTransaction();
 
@@ -64,4 +69,3 @@ void ReceivingServer::receiveFile(){
     // statusLabel->setText(currentFortune);
     // getFortuneButton->setEnabled(true);
 }
-    

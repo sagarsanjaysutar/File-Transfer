@@ -10,17 +10,16 @@
 #include <QMap>
 #include <QJsonObject>
 #include <QStringList>
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
 
     // Standard Qt/QML Configuration
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    
-
     NetworkManager discovery;
     SFTPAccess sftp;
-    // ReceivingServer receivingServer(discovery.getLocalHostInterface());
+    ReceivingServer receivingServer();
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();

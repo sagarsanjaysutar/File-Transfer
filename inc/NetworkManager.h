@@ -11,11 +11,12 @@
 #include "DeviceDiscovery.h"
 
 //!< \brief Manages the devices on localhost network.
-class NetworkManager : public QObject {
+class NetworkManager : public QObject
+{
     Q_OBJECT
     Q_PROPERTY(QVariantList devicesOnNetwork READ getDevicesOnNetwork NOTIFY sig_devicesOnNetworkUpdated)
     Q_PROPERTY(QString localHostIPAddress READ getLocalHostIPAddress CONSTANT)
-    
+
 public:
     NetworkManager(QObject *parent = nullptr);
     ~NetworkManager();
@@ -32,7 +33,7 @@ public:
 private:
     //!< \brief A QThread & worker managing the device discovery process on the localhost network.
     QThread *m_discoveryThread;
-    DeviceDiscovery* m_deviceDiscoveryWorker;
+    DeviceDiscovery *m_deviceDiscoveryWorker;
 
     //!< \brief List of devices on the localhost network.
     QList<QSharedPointer<DeviceInterface>> m_devicesOnNetwork;
@@ -42,8 +43,6 @@ private:
 
     //!< \brief Returns the list of interfaces on a localhost/local computer.
     QList<QSharedPointer<DeviceInterface>> getLocalHostInterfaces();
-
-    
 
 signals:
     void sig_devicesOnNetworkUpdated();

@@ -1,47 +1,47 @@
 #include "DeviceInterface.h"
 
-
-DeviceInterface::DeviceInterface(QObject* parent) :
-    QObject(parent),
-    m_gatewayAddress(""),
-    m_ipAddress(""),
-    m_maskAddress(""),
-    m_CIDRAddress(""),
-    m_name(""),
-    m_type(QNetworkInterface::Unknown)
+DeviceInterface::DeviceInterface(QObject *parent) : QObject(parent),
+                                                    m_gatewayAddress(""),
+                                                    m_ipAddress(""),
+                                                    m_maskAddress(""),
+                                                    m_CIDRAddress(""),
+                                                    m_name(""),
+                                                    m_type(QNetworkInterface::Unknown)
 {
 }
 
-DeviceInterface::DeviceInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type, QObject* parent) : 
-    QObject(parent),
-    m_gatewayAddress(""),
-    m_ipAddress(ip),
-    m_maskAddress(mask),
-    m_CIDRAddress(""),
-    m_name(name),
-    m_type(type)
+DeviceInterface::DeviceInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type, QObject *parent) : QObject(parent),
+                                                                                                                                             m_gatewayAddress(""),
+                                                                                                                                             m_ipAddress(ip),
+                                                                                                                                             m_maskAddress(mask),
+                                                                                                                                             m_CIDRAddress(""),
+                                                                                                                                             m_name(name),
+                                                                                                                                             m_type(type)
 {
     setGatewayAddress(m_ipAddress, m_maskAddress);
     setCIDRAddress(m_ipAddress, m_maskAddress);
 }
 
-DeviceInterface::DeviceInterface(const DeviceInterface &interface, QObject* parent) :
-    QObject(parent),
-    m_gatewayAddress(interface.getGatewayAddress()),
-    m_ipAddress(interface.getIpAddress()),
-    m_maskAddress(interface.getMaskAddress()),
-    m_CIDRAddress(interface.getCIDRAddress()),
-    m_name(interface.getName()),
-    m_type(interface.getType())
-{}
+DeviceInterface::DeviceInterface(const DeviceInterface &interface, QObject *parent) : QObject(parent),
+                                                                                      m_gatewayAddress(interface.getGatewayAddress()),
+                                                                                      m_ipAddress(interface.getIpAddress()),
+                                                                                      m_maskAddress(interface.getMaskAddress()),
+                                                                                      m_CIDRAddress(interface.getCIDRAddress()),
+                                                                                      m_name(interface.getName()),
+                                                                                      m_type(interface.getType())
+{
+}
 
-void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress, const QHostAddress subnetMask){
+void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress, const QHostAddress subnetMask)
+{
 
-    if(ipAddress.isNull()){
+    if (ipAddress.isNull())
+    {
         qDebug() << "DeviceInterface: Can't set Gateway address, Invalid IP.";
         return;
     }
-    else{
+    else
+    {
         // Perform a bitwise AND b/w IP address & mask address to get the network address.
         // Gateway address is network address + 1.
         m_gatewayAddress = QHostAddress((ipAddress.toIPv4Address() & subnetMask.toIPv4Address()) + 1);
@@ -49,22 +49,25 @@ void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress, const QHos
     }
 }
 
-void DeviceInterface::setCIDRAddress(const QHostAddress ipAddress, const QHostAddress subnetMask){
+void DeviceInterface::setCIDRAddress(const QHostAddress ipAddress, const QHostAddress subnetMask)
+{
 
-    if(ipAddress.isNull() || subnetMask.isNull()){
+    if (ipAddress.isNull() || subnetMask.isNull())
+    {
         qDebug() << "DeviceInterface: Can't set CIDR address, Invalid IP & Mask.";
         return;
     }
 
     // Convert the subnet address into integer.
     quint32 subnetAddrInt = subnetMask.toIPv4Address();
-    
+
     // This is the correct way to determine the CIDR prefer-length
     // Initialize the CIDR prefix-length
     int cidr = 0;
-    
+
     // Count the number of "1" in the subnet mask
-    while(subnetAddrInt){
+    while (subnetAddrInt)
+    {
         cidr = cidr + (subnetAddrInt & 1);
         subnetAddrInt = subnetAddrInt >> 1;
     }
