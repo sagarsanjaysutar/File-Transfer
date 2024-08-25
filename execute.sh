@@ -26,13 +26,14 @@ if [ "$1" = "build" ]; then
         --security-opt apparmor:unconfined      \
         -it file_transfer:v2.0                  \
         sh -c "cd /File-Transfer &&             \
+            sudo rm -rf /File-Transfer/build /File-Transfer/bin && \
             mkdir -p /File-Transfer/build /File-Transfer/bin &&                   \
             cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
             cmake --build /File-Transfer/build &&              \
             sudo make install --directory=/File-Transfer/build/ DESTDIR=/File-Transfer/build/AppDir &&    \
             cd /File-Transfer/bin/ && \
             sudo QML_SOURCES_PATHS=/File-Transfer/res/qml QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib \
-            /home/user/linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt"
+            /home/user/linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt --desktop-file /File-Transfer/ci/file-transfer.desktop --icon-file /File-Transfer/ci/file-transfer.svg"
 else
     echo "Running the docker container to build & run the project's binary."
     # --volume $PWD:/File-Transfer:             Mount the project directory to the container.
@@ -50,5 +51,5 @@ else
             mkdir -p /File-Transfer/build /File-Transfer/bin &&                   \
             cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
             cmake --build /File-Transfer/build &&              \
-            /File-Transfer/build/file_transfer"
+            sudo /File-Transfer/build/file_transfer"
 fi

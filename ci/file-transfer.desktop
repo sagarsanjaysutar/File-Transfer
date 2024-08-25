@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=File-Transfer
+Exec=file-transfer
+Icon=file-transfer
+Categories=Utility;
