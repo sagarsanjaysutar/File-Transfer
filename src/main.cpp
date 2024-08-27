@@ -1,5 +1,5 @@
 #include "NetworkManager.h"
-#include "ReceivingServer.h"
+#include "Sender.h"
 #include "SFTPAccess.h"
 
 #include <QGuiApplication>
@@ -12,14 +12,17 @@
 #include <QStringList>
 int main(int argc, char *argv[])
 {
-
+    QStringList environment = QProcess::systemEnvironment();
+    qDebug() << "Env: " << environment;
     // Standard Qt/QML Configuration
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
     NetworkManager discovery;
-    SFTPAccess sftp;
-    ReceivingServer receivingServer();
+    SFTPAccess sftp(discovery.getLocalHostIPAddress());
+
+    return 0;
+    // Sender receivingServer();
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();
