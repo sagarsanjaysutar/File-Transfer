@@ -8,6 +8,7 @@ DeviceInterface::DeviceInterface(QObject *parent) : QObject(parent),
                                                     m_name(""),
                                                     m_type(QNetworkInterface::Unknown)
 {
+    printInterfaceInfo();
 }
 
 DeviceInterface::DeviceInterface(QHostAddress ip, QHostAddress mask, QString name, QNetworkInterface::InterfaceType type, QObject *parent) : QObject(parent),
@@ -20,6 +21,7 @@ DeviceInterface::DeviceInterface(QHostAddress ip, QHostAddress mask, QString nam
 {
     setGatewayAddress(m_ipAddress, m_maskAddress);
     setCIDRAddress(m_ipAddress, m_maskAddress);
+    printInterfaceInfo();
 }
 
 DeviceInterface::DeviceInterface(const DeviceInterface &interface, QObject *parent) : QObject(parent),
@@ -30,6 +32,15 @@ DeviceInterface::DeviceInterface(const DeviceInterface &interface, QObject *pare
                                                                                       m_name(interface.getName()),
                                                                                       m_type(interface.getType())
 {
+    printInterfaceInfo();
+}
+
+void DeviceInterface::printInterfaceInfo()
+{
+    qDebug() << "DeviceInterface: Interface Info: IP Address: " << m_ipAddress
+             << " Mask Address: " << m_maskAddress
+             << " Gateway Address: " << m_gatewayAddress
+             << " CIDR Address: " << m_CIDRAddress;
 }
 
 void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress, const QHostAddress subnetMask)
@@ -45,7 +56,7 @@ void DeviceInterface::setGatewayAddress(const QHostAddress ipAddress, const QHos
         // Perform a bitwise AND b/w IP address & mask address to get the network address.
         // Gateway address is network address + 1.
         m_gatewayAddress = QHostAddress((ipAddress.toIPv4Address() & subnetMask.toIPv4Address()) + 1);
-        qDebug() << "DeviceInterface: Gateway address set to " << m_gatewayAddress;
+        // qDebug() << "DeviceInterface: Gateway address set to " << m_gatewayAddress;
     }
 }
 
@@ -82,5 +93,5 @@ void DeviceInterface::setCIDRAddress(const QHostAddress ipAddress, const QHostAd
     // Append the CIDR number to the IP.
     m_CIDRAddress = ipAddrList.join(".").append("/").append(QString::number(cidr));
 
-    qDebug() << "DeviceInterface: CIDR address set to " << m_CIDRAddress;
+    // qDebug() << "DeviceInterface: CIDR address set to " << m_CIDRAddress;
 }

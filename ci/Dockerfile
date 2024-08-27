@@ -2,12 +2,10 @@
 # Refer: https://hub.docker.com/layers/stateoftheartio/qt6/6.5-gcc-aqt/images/sha256-c0dfd1cd174d855f0157ce0455270b2ee49f5eea4c7a40ffe0e848d41ae4d074?context=explore
 FROM stateoftheartio/qt6:6.5-gcc-aqt
 
-ENV HOME /home/user
-
 # Update the image
 RUN sudo apt-get update --fix-missing && sudo apt-get upgrade -y
 
-# Developement dependencies.
+# Dependencies required to run GUI app inside a Docker container
 RUN sudo apt-get install -y libgl1-mesa-dev libegl1-mesa-dev libxcb-xkb-dev libxcb-cursor0 libvulkan-dev x11-apps
 
 # Common linux utilities.
@@ -26,4 +24,8 @@ RUN wget --no-verbose --show-progress --progress=dot:giga ${LINUX_DEP_QT}
 RUN chmod +x $HOME/*
 
 # Application dependencies.
-RUN sudo apt-get install -y openssh-server openssh-client nmap
+RUN sudo apt-get install -y openssh-server openssh-client nmap libssh-dev
+
+USER user
+ENV HOME /home/user
+CMD /bin/bash

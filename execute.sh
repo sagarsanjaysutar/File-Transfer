@@ -36,20 +36,22 @@ if [ "$1" = "build" ]; then
             /home/user/linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt --desktop-file /File-Transfer/ci/file-transfer.desktop --icon-file /File-Transfer/ci/file-transfer.svg"
 else
     echo "Running the docker container to build & run the project's binary."
+    # Refer: https://www.baeldung.com/linux/docker-container-gui-applications https://stackoverflow.com/a/49717572
     # --volume $PWD:/File-Transfer:             Mount the project directory to the container.
     # --volume /tmp/.X11-unix:/tmp/.X11-unix:   Share X11 socket for enabling GUI on the container. Refer: https://stackoverflow.com/a/77747682 
     # --device=/dev/dri:/dev/dri:               Provide DRI for enabling GUI on the container. Refer: https://stackoverflow.com/a/77747682  
-    # --env DISPLAY:                            Sets DISPLAY env. variable for enabling GUI on the container. Refer: https://www.baeldung.com/linux/docker-container-gui-applications
+    # --env DISPLAY:                            Sets DISPLAY env. variable for enabling GUI on the container.
     # sh ...                                    Builds the project & runs the binary in Docker container.
     docker run                                  \
         --volume $PWD:/File-Transfer            \
         --volume /tmp/.X11-unix:/tmp/.X11-unix  \
         --device=/dev/dri:/dev/dri              \
         --env DISPLAY                           \
+        --net pub_net                           \
         -it file_transfer:v2.0                  \
         sh -c "cd /File-Transfer &&             \
             mkdir -p /File-Transfer/build /File-Transfer/bin &&                   \
             cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
             cmake --build /File-Transfer/build &&              \
-            sudo /File-Transfer/build/file_transfer"
+            sudo /File-Transfer/build/file-transfer"
 fi

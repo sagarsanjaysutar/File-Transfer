@@ -26,6 +26,9 @@ public:
     QString getCIDRAddress() const { return m_CIDRAddress; }
 
 private:
+    //!< \brief Prints info about this device interface.
+    void printInterfaceInfo();
+
     //!< \brief Calculates the gateway address using the IP & netmask.
     void setGatewayAddress(const QHostAddress ipAddress, const QHostAddress mask);
 

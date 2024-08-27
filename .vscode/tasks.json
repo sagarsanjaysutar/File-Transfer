@@ -7,7 +7,7 @@
       "args": ["-c", "./execute.sh"],
       "group": {
         "kind": "build",
-        "isDefault": false
+        "isDefault": true
       }
     },
     {

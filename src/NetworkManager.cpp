@@ -84,6 +84,7 @@ QList<QSharedPointer<DeviceInterface>> NetworkManager::getLocalHostInterfaces()
                 entry.ip() != QHostAddress(QHostAddress::LocalHost) &&
                 !entry.ip().isLoopback())
             {
+                qDebug() << "NetworkManager: Adding localhost interface...";
                 localHostInterfaces.append(
                     QSharedPointer<DeviceInterface>(new DeviceInterface(
                         entry.ip(),
