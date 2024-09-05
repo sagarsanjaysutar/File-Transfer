@@ -13,7 +13,7 @@ RUN sudo apt-get update --fix-missing && sudo apt-get upgrade -y
 RUN sudo apt-get install -y libgl1-mesa-dev libegl1-mesa-dev libxcb-xkb-dev libxcb-cursor0 libvulkan-dev x11-apps
 
 # Common linux utilities.
-RUN sudo apt-get install -y net-tools software-properties-common lsb-release file wget
+RUN sudo apt-get install -y net-tools software-properties-common lsb-release file wget ipcalc
 
 # Downloading latest linuxdeploy & it's corresponding plugins to generate AppImage.
 # The pre-installed linuxdeploy in this container does not contain appimage plugin.

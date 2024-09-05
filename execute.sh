@@ -22,13 +22,12 @@ function createDockerNetwork(){
     
     echo "Creating a docker network for the container..."
 
-    # 01. Get details of the first network interface on the host machine.
-    INTERFACE=$(ifconfig $(ifconfig | grep "UP,BROADCAST,RUNNING,MULTICAST" | awk 'NR==1 {sub(/:$/, "", $1); print $1}'))
-    INTERFACE_NAME=$(echo $INTERFACE | awk '{sub(/:$/, "", $1);print $1}')
-    INTERFACE_IP=$(echo $INTERFACE | awk '{print $6}')
-    
-    DOCKER_CIDR=192.168.0.0/29
-    DOCKER_GATEWAY=192.168.0.1
+    # 01. Fetch Network Info & allocate 8 IP addresses for the docker container
+    NETWORK_INFO=$(./scripts/networkInfo.sh)
+    NETWORK_NAME=$(echo "$NETWORK_INFO" | grep Name | awk '{print $3}')
+    NETWORK_CIDR=$(echo "$NETWORK_INFO" | grep CIDR | awk '{print $3}')
+    DOCKER_GATEWAY=$(echo "$NETWORK_INFO" | grep Gateway | awk '{print $3}')
+    DOCKER_CIDR=$(echo $NETWORK_CIDR | sed 's/\/[0-9]\+$/\/29/')
 
     # 02. Check if a docker network exists with the given CIDR.
     NETWORK_LIST=$(docker network ls | grep macvlan | awk '{print $1}')
@@ -47,12 +46,12 @@ function createDockerNetwork(){
         docker network create -d macvlan \
             --subnet=$DOCKER_CIDR \
             --gateway=$DOCKER_GATEWAY \
-            -o parent=$INTERFACE_NAME $DOCKER_NETWORK_NAME
+            -o parent=$NETWORK_NAME $DOCKER_NETWORK_NAME
     fi
 }
 
 function runDockerContainer(){
-    if [ "$1" = "build" ]; then
+    if [[ $1 == "build" ]]; then
         echo "Running the docker container to build & generate the project's AppImage..."
 
         # Run the container by configuring with permissions and device access needed for generating an AppImage.
@@ -91,4 +90,4 @@ function runDockerContainer(){
 }
 
 buildDockerContainer;
-runDockerContainer $(if [ $1 == "build" ]; then echo "build"; fi);
+runDockerContainer $(if [[ $1 == "build" ]]; then echo "build"; fi;)
