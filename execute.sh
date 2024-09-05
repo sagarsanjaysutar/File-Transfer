@@ -1,57 +1,94 @@
 #!/bin/bash
 
 #####################################################################################################
-#   A helper script to build/run the project inside a docker container.                             #
+#   A helper script to run the project inside a docker container.                                   #
 #   Usage:                                                                                          #
-#       ./execute           Builds & runs the project's binary inside a docker container.           #
-#       ./execute build     Builds & generates the project's AppImage inside a docker container.    #
+#       ./execute           Runs the project binary within the docker container.                    #
+#       ./execute build     Generates the project AppImage within the docker container.             #
+#                           Generated AppImage is placed in the build dir.                          #
 #####################################################################################################
 
-########## Build the docker container ########## 
-echo "Building the docker container..."
-docker build -t file_transfer:v2.0 $PWD/ci
+DOCKER_CONTAINER_NAME=file_transfer:v2.0
+DOCKER_NETWORK_NAME=file_transfer_network
 
-########## Run the docker container ########## 
-if [ "$1" = "build" ]; then
-    echo "Running the docker container to build & generate the project's AppImage."
-    # --volume $PWD:/File-Transfer:             Mount the project directory to the container.
-    # --device=/dev/fuse:/dev/fuse              FUSE Device of host is passed in order for linuxdeploy to work. Refer: https://stackoverflow.com/questions/48402218/fuse-inside-docker
-    # --cap-add SYS_ADMIN                       FUSE related persmission. Refer: https://stackoverflow.com/questions/48402218/fuse-inside-docker
-    # --security-opt apparmor:unconfined        FUSE related persmission. Refer: https://stackoverflow.com/questions/48402218/fuse-inside-docker
-    # sh ...                                    Builds the project & generates AppImage in project's bin dir.
-    docker run                                  \
-        --volume $PWD:/File-Transfer            \
-        --device=/dev/fuse:/dev/fuse            \
-        --cap-add SYS_ADMIN                     \
-        --security-opt apparmor:unconfined      \
-        -it file_transfer:v2.0                  \
-        sh -c "cd /File-Transfer &&             \
-            sudo rm -rf /File-Transfer/build /File-Transfer/bin && \
-            mkdir -p /File-Transfer/build /File-Transfer/bin &&                   \
-            cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
-            cmake --build /File-Transfer/build &&              \
-            sudo make install --directory=/File-Transfer/build/ DESTDIR=/File-Transfer/build/AppDir &&    \
-            cd /File-Transfer/bin/ && \
-            sudo QML_SOURCES_PATHS=/File-Transfer/res/qml QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib \
-            /home/user/linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt --desktop-file /File-Transfer/ci/file-transfer.desktop --icon-file /File-Transfer/ci/file-transfer.svg"
-else
-    echo "Running the docker container to build & run the project's binary."
-    # Refer: https://www.baeldung.com/linux/docker-container-gui-applications https://stackoverflow.com/a/49717572
-    # --volume $PWD:/File-Transfer:             Mount the project directory to the container.
-    # --volume /tmp/.X11-unix:/tmp/.X11-unix:   Share X11 socket for enabling GUI on the container. Refer: https://stackoverflow.com/a/77747682 
-    # --device=/dev/dri:/dev/dri:               Provide DRI for enabling GUI on the container. Refer: https://stackoverflow.com/a/77747682  
-    # --env DISPLAY:                            Sets DISPLAY env. variable for enabling GUI on the container.
-    # sh ...                                    Builds the project & runs the binary in Docker container.
-    docker run                                  \
-        --volume $PWD:/File-Transfer            \
-        --volume /tmp/.X11-unix:/tmp/.X11-unix  \
-        --device=/dev/dri:/dev/dri              \
-        --env DISPLAY                           \
-        --net pub_net                           \
-        -it file_transfer:v2.0                  \
-        sh -c "cd /File-Transfer &&             \
-            mkdir -p /File-Transfer/build /File-Transfer/bin &&                   \
-            cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ &&              \
-            cmake --build /File-Transfer/build &&              \
-            sudo /File-Transfer/build/file-transfer"
-fi
+# Builds the docker container from the DockerFile
+function buildDockerContainer(){
+    echo "Building the docker container..."
+    docker build -t $DOCKER_CONTAINER_NAME $PWD/ci
+}
+
+# Create a network for the Docker container.
+function createDockerNetwork(){
+    
+    echo "Creating a docker network for the container..."
+
+    # 01. Get details of the first network interface on the host machine.
+    INTERFACE=$(ifconfig $(ifconfig | grep "UP,BROADCAST,RUNNING,MULTICAST" | awk 'NR==1 {sub(/:$/, "", $1); print $1}'))
+    INTERFACE_NAME=$(echo $INTERFACE | awk '{sub(/:$/, "", $1);print $1}')
+    INTERFACE_IP=$(echo $INTERFACE | awk '{print $6}')
+    
+    DOCKER_CIDR=192.168.0.0/29
+    DOCKER_GATEWAY=192.168.0.1
+
+    # 02. Check if a docker network exists with the given CIDR.
+    NETWORK_LIST=$(docker network ls | grep macvlan | awk '{print $1}')
+    NETWORK_ADDED=false
+    for i in $NETWORK_LIST; do
+        if [ $(docker network inspect $i | grep Subnet | awk -F'"' '{print $4}') = $DOCKER_CIDR ]; then
+            echo "A docker network with $CIDR CIDR already exists."
+            NETWORK_ADDED=true
+            break
+        fi
+    done
+
+    # 03. If the Docker network doesn't exist, create one.    
+    if [ $(docker network ls | grep -c $DOCKER_NETWORK_NAME) -eq 0 ]; then
+        echo "Creating a new docker network with $CIDR CIDR..."
+        docker network create -d macvlan \
+            --subnet=$DOCKER_CIDR \
+            --gateway=$DOCKER_GATEWAY \
+            -o parent=$INTERFACE_NAME $DOCKER_NETWORK_NAME
+    fi
+}
+
+function runDockerContainer(){
+    if [ "$1" = "build" ]; then
+        echo "Running the docker container to build & generate the project's AppImage..."
+
+        # Run the container by configuring with permissions and device access needed for generating an AppImage.
+        # Param Info:
+        # --volume $PWD:/File-Transfer:             Mount the project directory to the container.
+        # --device=/dev/fuse:/dev/fuse              FUSE Device of host is passed in order for linuxdeploy to work. Refer: https://stackoverflow.com/questions/48402218/fuse-inside-docker
+        # --cap-add SYS_ADMIN                       FUSE related persmission. Refer: https://stackoverflow.com/questions/48402218/fuse-inside-docker
+        # --security-opt apparmor:unconfined        FUSE related persmission. Refer: https://stackoverflow.com/questions/48402218/fuse-inside-docker
+        docker run                                  \
+            --volume $PWD:/File-Transfer            \
+            --device=/dev/fuse:/dev/fuse            \
+            --cap-add SYS_ADMIN                     \
+            --security-opt apparmor:unconfined      \
+            -it $DOCKER_CONTAINER_NAME              \
+            build
+    else
+        echo "Running the docker container to build & run the project's binary..."
+
+        createDockerNetwork;
+
+        # Run the container by configuring with GUI specific flags.
+        # Param Info:
+        # --volume $PWD:/File-Transfer:             Mount the project directory to the container.
+        # --volume /tmp/.X11-unix:/tmp/.X11-unix:   Share X11 socket for enabling GUI on the container. Refer: https://stackoverflow.com/a/77747682 
+        # --device=/dev/dri:/dev/dri:               Provide DRI for enabling GUI on the container. Refer: https://stackoverflow.com/a/77747682  
+        # --env DISPLAY:                            Sets DISPLAY env. variable for enabling GUI on the container.
+        # Refer: https://www.baeldung.com/linux/docker-container-gui-applications https://stackoverflow.com/a/49717572
+        docker run                                  \
+            --volume $PWD:/File-Transfer            \
+            --volume /tmp/.X11-unix:/tmp/.X11-unix  \
+            --device=/dev/dri:/dev/dri              \
+            --env DISPLAY                           \
+            --net $DOCKER_NETWORK_NAME              \
+            -it $DOCKER_CONTAINER_NAME
+    fi
+}
+
+buildDockerContainer;
+runDockerContainer $(if [ $1 == "build" ]; then echo "build"; fi);
