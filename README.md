@@ -2,7 +2,7 @@
 
 Securely transfer files on a local network.
 
-https://github.com/sagarsanjaysutar/File-Transfer/assets/41800823/df94162a-fa58-475e-8184-6c649e7d392b
+https://github.com/user-attachments/assets/1b124237-2bc2-4626-bf9f-8202820805a0
 
 ## Concepts
 
