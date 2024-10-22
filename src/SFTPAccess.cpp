@@ -13,38 +13,12 @@ static const QString projectDir("");
 
 SFTPAccess::SFTPAccess(QString hostIPAddress) : m_hostIPAddress(hostIPAddress)
 {
-    startSSHSession();
+    qDebug() << "SFTPAccess: Constructor called.";
 }
 
 SFTPAccess::~SFTPAccess()
 {
     qDebug() << "SFTPAccess: Destructor called.";
-}
-
-void SFTPAccess::startSSHSession()
-{
-    enableSFTP();
-    // int verbosity = SSH_LOG_PROTOCOL;
-    int port = 22;
-    const char *host = qPrintable(m_hostIPAddress);
-    ssh_session mySSHSession = ssh_new();
-    if (mySSHSession == nullptr)
-    {
-        qDebug() << "Failed to open a new SSH session.";
-    }
-
-    ssh_options_set(mySSHSession, SSH_OPTIONS_HOST, host);
-    // ssh_options_set(mySSHSession, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
-    ssh_options_set(mySSHSession, SSH_OPTIONS_PORT, &port);
-
-    qDebug() << "SFTPAccess: Connecting to SSH server of host " << m_hostIPAddress << ":" << port;
-
-    int sshConnection = ssh_connect(mySSHSession);
-
-    qDebug() << "SFTPAccess: SSH Connection status " << sshConnection << ssh_get_error(mySSHSession);
-
-    ssh_disconnect(mySSHSession);
-    ssh_free(mySSHSession);
 }
 
 void SFTPAccess::disableSFTP()
@@ -92,11 +66,10 @@ void SFTPAccess::enableSFTP()
     QProcess *enableSFTPProcess = new QProcess();
     QObject::connect(enableSFTPProcess, &QProcess::finished, [&](int exitCode, QProcess::ExitStatus exitStatus)
                      { enableSFTPExitCode = exitCode; });
-    // QObject::connect(enableSFTPProcess, &QProcess::readyReadStandardOutput, [&]()
-    //                  { qDebug() << "SFTPAccess: Enable SFTP output: " << enableSFTPProcess->readAllStandardOutput(); });
+    QObject::connect(enableSFTPProcess, &QProcess::readyReadStandardOutput, [&]()
+                     { qDebug() << "SFTPAccess: Enable SFTP output: " << enableSFTPProcess->readAllStandardOutput(); });
     QObject::connect(enableSFTPProcess, &QProcess::readyReadStandardError, [&]()
-                     {
-        qDebug() << "SFTPAccess: Enable SFTP error output:" << enableSFTPProcess->readAllStandardError();; });
+                     { qDebug() << "SFTPAccess: Enable SFTP error output:" << enableSFTPProcess->readAllStandardError(); });
     QObject::connect(enableSFTPProcess, &QProcess::errorOccurred, [=](QProcess::ProcessError error)
                      { qDebug() << "SFTPAccess: SFTP enable process error occurred. " << error; });
 
