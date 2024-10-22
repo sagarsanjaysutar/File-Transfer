@@ -1,0 +1,32 @@
+ 1986  history | grep make
+ 1987  history | grep plugin
+ 1988  history | grep dpkg
+ 1989  exit
+ 1990  histroy | grep prepare
+ 1991  history | grep prepare
+ 1992  exit
+ 1993  history | grep ssl
+ 1994  exit
+ 1995  dpkg -l | grep ssl
+ 1996  exit
+ 1997  lsb_release -a
+ 1998  apt-cache search linux-headers
+ 1999  history | grep make
+ 2000  rm build/ -r
+ 2001  cd build/
+ 2002  make install DESTDIR=AppDir
+ 2003  cd ../
+ 2004  rm -r build/
+ 2005  mkdir build
+ 2006  cd build/
+ 2007  cmake -B ~/Tutorials/File-Transfer/build -S ~/Tutorials/File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.3/gcc_64
+ 2008  cmake --build ~/Tutorials/File-Transfer/build/
+ 2009  make install DESTDIR=AppDir
+ 2010  cd ../
+ 2011  rm build/ -r
+ 2012  history
+ 
+ cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64
+ cmake --build /File-Transfer/build/
+ make install DESTDIR=AppDir
+ sudo QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake ./linuxdeploy-x86_64.AppImage --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt

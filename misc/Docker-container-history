@@ -1,0 +1,251 @@
+    1  ls /
+    2  sudo apt-get -y install fuse kmod module-assistant
+    3  cd /usr/src
+    4  m-a prepare
+    5  sudo m-a prepare
+    6  sudo m-a a-i fuse
+    7  depmod -ae $(uname -r)
+    8  modprobe fuse
+    9  uname -r
+   10  lsb_release 
+   11  sudo apt-get install lsb-core
+   12  lsb_release 
+   13  sudo apt-get update --fix-missing
+   14  sudo apt-get install lsb-core
+   15  lsb_release 
+   16  lsb_release -a
+   17  uname -r
+   18  sudo m-a prepare
+   19  sudo apt-get install linux-headers-$(uname -r)
+   20  sudo apt-get update
+   21  sudo apt-get install linux-headers-generic
+   22  sudo m-a prepare
+   23  sudo m-a a-i fuse
+   24  apt-cache search linux-headers
+   25  ls -lh /File-Transfer/utils/AppImage/
+   26  cd /File-Transfer/utils/AppImage/
+   27  ls -lh
+   28  chmod +x linux-headers-6.5.0-060500_6.5.0-060500.202308271831_all.deb 
+   29  ./linux-headers-6.5.0-060500_6.5.0-060500.202308271831_all.deb 
+   30  dpkg -l | grep header
+   31  dpkg -i linux-headers-6.5.0-060500_6.5.0-060500.202308271831_all.deb 
+   32  sudo dpkg -i linux-headers-6.5.0-060500_6.5.0-060500.202308271831_all.deb 
+   33  dpkg -l | grep header
+   34  cd /usr/src/
+   35  sudo m-a prepare
+   36  sudo m-a a-i fuse
+   37  dpkg -l | grep header
+   38  cd /File-Transfer/utils/AppImage/
+   39  ls -lh
+   40  chmod +x linux-headers-6.5.0-060500-generic_6.5.0-060500.202308271831_amd64.deb 
+   41  sudo dpkg -i linux-headers-6.5.0-060500-generic_6.5.0-060500.202308271831_amd64.deb 
+   42  sudo apt install libssl3
+   43  sudo apt update && sudo apt dist-upgrade
+   44  sudo apt --fix-broken install && sudo apt update && sudo apt dist-upgrade 
+   45  sudo apt install libssl3
+   46  dpkg -l | grep header
+   47  sudo apt-get install libssl-dev
+   48  sudo dpkg -i linux-headers-6.5.0-060500-generic_6.5.0-060500.202308271831_amd64.deb 
+   49  sud apt-get update && apt-get dist-upgrade
+   50  sudo apt-get update && apt-get dist-upgrade
+   51  sudo apt-get update && sudo apt-get dist-upgrade
+   52  sudo apt --fix-broken install && sudo apt-get update && sudo apt-get dist-upgrade
+   53  dpkg -l | grep header
+   54  sudo dpkg -i linux-headers-6.5.0-060500-generic_6.5.0-060500.202308271831_amd64.deb 
+   55  sudo apt-get update
+   56  sudo apt-get dist-upgrade
+   57  sudo apt --fix-broken install
+   58  sudo apt-get dist-upgrade
+   59  dpkg -l | grep header
+   60  sudo apt-get install libssl-dev
+   61  dpkg -l | grep ssl
+   62  apt search ssl
+   63  apt search libssl
+   64  lsb_release 
+   65  lsb_release -a
+   66  history
+   67  apt-cache search fuse
+   68  dpkg -l | grep fuse 
+   69  modprobe fuse
+   70  lsb_release -a
+   71  ls /etc/apt/sources.list.d/
+   72  lsmode
+   73  lsmod
+   74  lsmod | grep fuse
+   75  sudo apt-get -y install fuse kmod module-assistant
+   76  modprobe fuse
+   77  apt search ssl
+   78  apt search libssl
+   79  lsb_release -a
+   80  sudo apt-get install build-essential
+   81  uname -r
+   82  sudo add-apt-repository universe
+   83  sudo add-apt-repository multiverse
+   84  sudo apt-get update
+   85  sudo apt install software-properties-common
+   86  sudo add-apt-repository universe
+   87  sudo add-apt-repository multiverse
+   88  sudo apt-get update
+   89  sudo apt install build-essential checkinstall zlib1g-dev -y
+   90  sudo wget https://github.com/openssl/openssl/releases/download/openssl-3.0.8/openssl-3.0.8.tar.gz
+   91  mv openssl-3.0.8.tar.gz ~/
+   92  cd ~/
+   93  ls -lh
+   94  sudo tar xvf openssl-3.0.8.tar.gz
+   95  ls -lh
+   96  cd openssl-3.0.8
+   97  ./config
+   98  sudo ./config
+   99  make
+  100  sudo make
+  101  make test
+  102  sudo make test
+  103  sudo make install
+  104  dpkg -l | grep ssl
+  105  ls -lh
+  106  cd ../
+  107  ls -lh
+  108  sudo ldconfig
+  109  dpkg -l | grep ssl
+  110  cd openssl-3.0.8
+  111  sudo ldconfig
+  112  dpkg -l | grep ssl
+  113  which openssl
+  114  openssl --version
+  115  openssl
+  116  openssl version
+  117  ls -lh /usr/local/bin/openssl 
+  118  date
+  119  ls -lh /etc/profile.d/
+  120  /usr/local/bin 
+  121  /usr/local/bin/openssl 
+  122  sudo ldconfig
+  123  ls -lh /usr/local/lib | grep ssl
+  124  ls -lh /usr/local/lib64/ | grep ssl
+  125  sudo ldconfig /usr/local/lib64
+  126  openssl version
+  127  modprobe fuse
+  128  ls -lh /usr/local/bin/
+  129  sudo tee /etc/profile.d/openssl.sh<<EOF
+export PATH=/usr/local/bin:\$PATH
+export LD_LIBRARY_PATH=/usr/local/lib64:\$LD_LIBRARY_PATH
+EOF
+
+  130  source /etc/profile.d/openssl.sh 
+  131  openssl version
+  132  cd /File-Transfer/
+  133  cd utils/
+  134  ls -lh
+  135  cd AppImage/
+  136  ls -lh
+  137  dpkg -i linux-headers-6.5.0-060500-generic_6.5.0-060500.202308271831_amd64.deb 
+  138  sudo dpkg -i linux-headers-6.5.0-060500-generic_6.5.0-060500.202308271831_amd64.deb 
+  139  dpkg -l | grep ssl
+  140  ls -lh /usr/local/lib64/
+  141  uname -a
+  142  deb http://security.ubuntu.com/ubuntu jammy-security main 
+  143  wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl3_3.0.2-0ubuntu1.17_amd64.deb
+  144  ls -lh
+  145  chmod +x libssl3_3.0.2-0ubuntu1.17_amd64.deb 
+  146  sudo dpkg -i libssl3_3.0.2-0ubuntu1.17_amd64.deb 
+  147  wget http://security.ubuntu.com/ubuntu/pool/main/g/glibc/libc6_2.35-0ubuntu3.8_amd64.deb
+  148  chmod +x libc6_2.35-0ubuntu3.8_amd64.deb 
+  149  sudo dpkg -i libc6_2.35-0ubuntu3.8_amd64.deb 
+  150  lsb_release -a
+  151  uname -r
+  152  uname -a
+  153  ls -lh /tmp/
+  154  whihc linuxdeploy
+  155  which linuxdeploy-x86_64.AppImage 
+  156  which linuxdeploy
+  157  linuxdeploy --version
+  158  cd ../
+  159  cd ~
+  160  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  161  export QML_SOURCES_PATHS=/File-Transfer/res/qml
+  122  export QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake
+  162  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  163  export LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib
+  164  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  165  QMAKE=/opt/Qt/6.5.0/gcc_64/bin/qmake
+  166  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  167  ls -lh /File-Transfer/build/AppDir/
+  168  cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  169  cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  170  cmake --build /File-Transfer/build
+  171  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  172  ls -lh /File-Transfer/build/AppDir/
+  173  cmake --install build --prefix build/AppDir
+  174  cmake --install /File-Transfer/build --prefix /File-Transfer/build/AppDir
+  175  cmake --build /File-Transfer/build/
+  176  cmake --build /File-Transfer/build/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  177  cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/ --build /File-Transfer/build/
+  178  cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  179  ls -lh /File-Transfer/build/
+  180  date
+  181  cmake --install /File-Transfer/build --prefix /File-Transfer/build/AppDir
+  182  cd /File-Transfer/
+  183  cmake --install /File-Transfer/build --prefix /File-Transfer/build/AppDir
+  184  cd build/
+  185  make install DESTDIR=AppDir/
+  186  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  187  make
+  188  make install DESTDIR=AppDir
+  189  cd AppDir/
+  190  tree
+  191  sudo apt install tree
+  192  sudo apt --fix-broken install
+  193  sudo apt install tree
+  194  tree
+  195  cd ../
+  196  mkdir -p /File-Transfer/build
+  197  cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  198  cmake --build /File-Transfer/buil
+  199  cmake --build /File-Transfer/build
+  200  cmake --install /File-Transfer/build --prefix /File-Transfer/build/AppDir
+  201  cd build/
+  202  make install DESTDIR=AppDir
+  203* cd ../c
+  204  mkdir -p /File-Transfer/build
+  205  cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  206  cmake --build /File-Transfer/build
+  207  cd build/
+  208  make install DESTDIR=AppDir
+  209  cd ../
+  210  mkdir -p /File-Transfer/build
+  211  cmake -B /File-Transfer/build -S /File-Transfer/ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_PREFIX_PATH=/opt/Qt/6.5.0/gcc_64/
+  212  cmake --build /File-Transfer/build
+  213  cmake --install /File-Transfer/build --prefix /File-Transfer/build/AppDir
+  214  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  215  export LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib
+  216  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  217  export LD_LIBRARY_PATH=/opt/Qt/6.5.0/gcc_64/lib
+  218  echo $LD_LIBRARY_PATH/
+  219  linuxdeploy-plugin-qt --appdir /File-Transfer/build/AppDir/ --output appimage
+  220  linuxdeploy-plugin-qt --appdir /File-Transfer/build/AppDir/
+  221  cd build/
+  222  rm AppDir/ -r
+  223  make install DESTDIR=AppDir
+  224  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  225  ls -lh /tmp/
+  226  linuxdeploy-plugin-qt --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  227  linuxdeploy-plugin-qt --appdir=/File-Transfer/build/AppDir/ --plugin qt
+  228  linuxdeploy-plugin-qt --appdir=/File-Transfer/build/AppDir/ - qt
+  229  linuxdeploy-plugin-qt --appdir=/File-Transfer/build/AppDir/
+  230  ls -lh
+  231  cd ~/
+  232  linuxdeploy-plugin-qt --appdir=/File-Transfer/build/AppDir/
+  233  ls -lh
+  234  linuxdeploy-plugin-qt --appdir=/File-Transfer/build/AppDir/
+  235  echo $?
+  236  ls -lh
+  237  linuxdeploy-plugin-qt --appdir=/File-Transfer/build/AppDir/ --output
+  238  cd /File-Transfer/
+  239  cd `
+  240  cd ~
+  241  linuxdeploy-plugin-qt --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  242  linuxdeploy --appdir /File-Transfer/build/AppDir/ --output appimage --plugin qt
+  243  ls -lh /tmp/
+  244  dpkg -l | grep header
+  245  history
+

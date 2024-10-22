@@ -1,0 +1,28 @@
+user@5ecbad9cbf71:~$ QT_DEBUG_PLUGINS=1 /File-Transfer/build/File-Transfer-x86_64.AppImage 
+Detected locale "C" with character encoding "ANSI_X3.4-1968", which is not UTF-8.
+Qt depends on a UTF-8 locale, and has switched to "C.UTF-8" instead.
+If this causes problems, reconfigure your locale. See the locale(1) manual
+for more information.
+qt.core.plugin.factoryloader: checking directory path "/tmp/.mount_File-Tzjgtt7/usr/plugins/platforms" ...
+qt.core.plugin.factoryloader: looking at "/tmp/.mount_File-Tzjgtt7/usr/plugins/platforms/libqxcb.so"
+qt.core.plugin.loader: Failed to find metadata in lib /tmp/.mount_File-Tzjgtt7/usr/plugins/platforms/libqxcb.so: '/tmp/.mount_File-Tzjgtt7/usr/plugins/platforms/libqxcb.so' is not a Qt plugin (metadata not found)
+qt.core.plugin.factoryloader: "Failed to extract plugin meta data from '/tmp/.mount_File-Tzjgtt7/usr/plugins/platforms/libqxcb.so': '/tmp/.mount_File-Tzjgtt7/usr/plugins/platforms/libqxcb.so' is not a Qt plugin (metadata not found)" 
+         not a plugin
+qt.core.plugin.factoryloader: checking directory path "/tmp/.mount_File-Tzjgtt7/usr/bin/platforms" ...
+qt.qpa.plugin: Could not find the Qt platform plugin "xcb" in ""
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Aborted (core dumped)
+
+
+ssutar@ENG-47-LX:~/Tutorials/File-Transfer/build$ QT_DEBUG_PLUGINS=1 ./File-Transfer-x86_64.AppImage 
+qt.core.plugin.factoryloader: checking directory path "/tmp/.mount_File-Top3THA/usr/plugins/platforms" ...
+qt.core.plugin.factoryloader: looking at "/tmp/.mount_File-Top3THA/usr/plugins/platforms/libqxcb.so"
+qt.core.plugin.loader: Failed to find metadata in lib /tmp/.mount_File-Top3THA/usr/plugins/platforms/libqxcb.so: '/tmp/.mount_File-Top3THA/usr/plugins/platforms/libqxcb.so' is not a Qt plugin (metadata not found)
+qt.core.plugin.factoryloader: "Failed to extract plugin meta data from '/tmp/.mount_File-Top3THA/usr/plugins/platforms/libqxcb.so': '/tmp/.mount_File-Top3THA/usr/plugins/platforms/libqxcb.so' is not a Qt plugin (metadata not found)" 
+         not a plugin
+qt.core.plugin.factoryloader: checking directory path "/tmp/.mount_File-Top3THA/usr/bin/platforms" ...
+qt.qpa.plugin: Could not find the Qt platform plugin "xcb" in ""
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Aborted (core dumped)
