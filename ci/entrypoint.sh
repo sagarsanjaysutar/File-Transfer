@@ -24,7 +24,7 @@ function cmakeInstall(){
 
 # Execute the project binary.
 function executeBinary(){
-    echo "Executing the project binary..."
+    echo "Executing the project binary... $DISPLAY $QMAKE "
     /File-Transfer/build/file-transfer
 }
 

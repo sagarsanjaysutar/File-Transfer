@@ -19,8 +19,7 @@ public:
     Q_INVOKABLE void disableSFTP();
 
 private:
-    QString m_hostIPAddress; 
-    void startSSHSession();
+    QString m_hostIPAddress;
 };
 
 #endif

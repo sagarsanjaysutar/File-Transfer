@@ -17,8 +17,10 @@ _The purpose of this project is to learn various advanced concepts in C++._
 
 ## Running the project
 
-1. Builds & runs the project's binary inside a docker container. 
+1. Builds & runs the project's binary inside a docker container. On the host machine run the following
     ```shell
+    modprobe fuse
+    xhost +local:docker
     ./execute 
     ```
 2. Builds & generates the project's AppImage inside a docker container. The generated AppImage (bin/) can be executed on any Linux system by simply double clicking.
