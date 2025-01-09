@@ -1,11 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QTextStream>
-#include <QFile>
-#include <QMap>
-#include <QJsonObject>
-#include <QStringList>
+#include <QProcessEnvironment>
 
 #include "NetworkManager.h"
 #include "Sender.h"
@@ -13,20 +9,24 @@
 
 int main(int argc, char *argv[])
 {
-    QStringList environment = QProcess::systemEnvironment();
-    qDebug() << "Env: " << environment;
+    // For debugging purposes print environment variables.
+    qDebug() << "Env: " << QProcessEnvironment::systemEnvironment().toStringList();
+
     // Standard Qt/QML Configuration
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
     NetworkManager discovery;
-    SFTPAccess sftp(discovery.getLocalHostIPAddress());
+    // SFTPAccess sftp(discovery.getLocalHostIPAddress());
+
+    // Sender
+    // Receiver
 
     // Expose backend objects to QML
     QQmlContext *ctxt = engine.rootContext();
     QVector<QQmlContext::PropertyPair> qmlProperties;
     qmlProperties.push_back(QQmlContext::PropertyPair{"discovery", QVariant::fromValue(&discovery)});
-    qmlProperties.push_back(QQmlContext::PropertyPair{"sftp", QVariant::fromValue(&sftp)});
+    // qmlProperties.push_back(QQmlContext::PropertyPair{"sftp", QVariant::fromValue(&sftp)});
     ctxt->setContextProperties(qmlProperties);
 
     engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));
