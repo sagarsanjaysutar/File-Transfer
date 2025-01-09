@@ -59,7 +59,7 @@ function manageSSHConfig(){
             echo -e "Match User $USER           \
                 \n\tForceCommand internal-sftp  \
                 \n\tPasswordAuthentication yes  \
-                \n\tChrootDirectory $USER       \
+                \n\tChrootDirectory $HOME_DIR   \
                 \n\tPermitTunnel no             \
                 \n\tAllowAgentForwarding no     \
                 \n\tAllowTcpForwarding no       \
@@ -80,6 +80,7 @@ function manageFolderPermissions(){
 
     # As per SFTP rules, the parent of Download dir i.e. Home dir. needs to be owned by root.
     # Refer: https://man.openbsd.org/sshd_config#ChrootDirectory
+    # Refer: https://askubuntu.com/a/1045227 
     mkdir -p $HOME_DIR
     chown root:root $HOME_DIR
     chmod 755 $HOME_DIR

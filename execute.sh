@@ -46,7 +46,8 @@ function createDockerNetwork(){
         docker network create -d macvlan \
             --subnet=$DOCKER_CIDR \
             --gateway=$DOCKER_GATEWAY \
-            -o parent=$NETWORK_NAME $DOCKER_NETWORK_NAME
+            -o parent=$NETWORK_NAME \
+            $DOCKER_NETWORK_NAME
     fi
 }
 
